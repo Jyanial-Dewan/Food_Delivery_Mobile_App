@@ -1,3 +1,4 @@
 declare module '@env' {
-  export const procgURLL: string;
+  export const baseURL: string;
+  export const secureStorageKey: string;
 }
