@@ -25,6 +25,8 @@ import {httpRequest} from '../common/constant/httpRequest';
 import {api} from '../common/apis/api';
 import {BaseURL} from '../../App';
 import {secureStorage} from '../utils/Storage/mmkv';
+import {useDispatch} from 'react-redux';
+import {setToken} from '../stores/Redux/Slices/UserSlice';
 
 type StackNavProps = StackNavigationProp<RootStackScreensParms, 'LoginScreen'>;
 
@@ -33,6 +35,7 @@ interface LoginScreenProps {
 }
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
+  const dispatch = useDispatch();
   const [showPass, setShowPass] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(true);
@@ -84,7 +87,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     const res = await httpRequest(api_params, setIsLoading);
     console.log(res, 'res');
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
-      secureStorage.setItem('user_id', JSON.stringify(res?.data?.user_id));
+      dispatch(setToken(res?.data));
+      secureStorage.setItem('user_token', JSON.stringify(res?.data));
       navigation.replace('DrawerTabs');
     } else {
       toaster.show({message: res?.data?.message, type: 'warning'});
