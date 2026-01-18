@@ -10,11 +10,10 @@ import {
 import {PaperProvider} from 'react-native-paper';
 import {baseURL} from '@env';
 import {secureStorage} from './src/utils/Storage/mmkv';
-import DrawerTabs from './src/navigations/DrawerTabs';
-import {Provider, useDispatch, useSelector} from 'react-redux';
-import {RootState, store} from './src/stores/Redux/Store/Store';
+import {Provider, useDispatch} from 'react-redux';
+import {store} from './src/stores/Redux/Store/Store';
 import {Linking} from 'react-native';
-import {etToken, setToken} from './src/stores/Redux/Slices/UserSlice';
+import {setToken} from './src/stores/Redux/Slices/UserSlice';
 // import delay from './src/services/delay';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
@@ -48,15 +47,13 @@ const linking: LinkingOptions<any> = {
   },
 };
 const Main = () => {
-  const userToken = useSelector((state: RootState) => state.userToken);
   const dispatch = useDispatch();
+  // const navigation = useNavigation<RootStackNavigationProp>();
   useEffect(() => {
-    const user_token = secureStorage.getItem('user_token');
-    if (user_token) {
-      const user = JSON.parse(user_token);
-      dispatch(setToken(user));
+    const user_token = JSON.parse(secureStorage.getItem('user_token'));
+    dispatch(setToken(user_token));
+    if (user_token?.access_token && user_token?.user_id) {
     }
-    console.log(user_token, 'user_token');
   }, [dispatch]);
 
   const onReady = useCallback(async () => {
@@ -81,14 +78,12 @@ const Main = () => {
   // // }
   // BackHandler.addEventListener('hardwareBackPress', backAction);
 
-  const user = secureStorage.getItem('user');
-
   return (
     <PaperProvider>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ToastProvider>
           <NavigationContainer linking={linking} onReady={onReady}>
-            {user ? <DrawerTabs /> : <RootStack />}
+            <RootStack />
           </NavigationContainer>
         </ToastProvider>
       </SafeAreaProvider>

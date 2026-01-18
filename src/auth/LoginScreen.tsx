@@ -60,7 +60,6 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   }, [setValue]);
 
   const onSubmit = async (data: ILogInPayloadType) => {
-    console.log(data, 'data');
     // store remember me data
     if (checked) {
       secureStorage.setItem('user', data.user);
@@ -89,11 +88,14 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
       dispatch(setToken(res?.data));
       secureStorage.setItem('user_token', JSON.stringify(res?.data));
-      navigation.replace('DrawerTabs');
+      // navigation.replace('DrawerTabs');
     } else {
       toaster.show({message: res?.data?.message, type: 'warning'});
     }
   };
+  // const userToken = useSelector((state: RootState) => state.userToken);
+  // const u = secureStorage.getItem('user_token');
+  // console.log(u, 'user_token 22');
 
   return (
     <Container

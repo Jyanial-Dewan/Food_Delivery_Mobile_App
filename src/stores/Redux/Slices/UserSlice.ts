@@ -24,12 +24,13 @@ export const UserSlice = createSlice({
   initialState,
   reducers: {
     setToken: (state, action: PayloadAction<UserTokenState>) => {
-      state = action.payload;
+      return action.payload;
     },
     token: state => state,
+    clearToken: () => initialState,
   },
 });
 
-export const {setToken, token} = UserSlice.actions;
+export const {setToken, token, clearToken} = UserSlice.actions;
 
 export default UserSlice.reducer;
