@@ -3,27 +3,24 @@ import {
   createDrawerNavigator,
   DrawerContentComponentProps,
   DrawerContentScrollView,
-  DrawerItemList,
 } from '@react-navigation/drawer';
 import BottomTabs from './BottomTabs';
 import Profile from '../modules/Profile/Profile';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, useColorScheme} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {secureStorage} from '../utils/Storage/mmkv';
+import {useDispatch} from 'react-redux';
+import {clearToken} from '../stores/Redux/Slices/UserSlice';
 
 const {Navigator, Screen} = createDrawerNavigator();
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const isDarkMode = useColorScheme() === 'dark';
   const activeRoute = props.state.routes[props.state.index];
+  const dispatch = useDispatch();
 
   const handleLogOut = () => {
-    secureStorage.clearAll();
+    secureStorage.removeItem('user_token');
+    dispatch(clearToken());
   };
 
   const isActive = (routeName: string) => {
@@ -69,10 +66,17 @@ const DrawerTabs = () => {
       drawerContent={props => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: false,
+        drawerType: 'slide',
+        lazy: true,
+        swipeEdgeWidth: 0,
         drawerActiveTintColor: 'white',
         drawerActiveBackgroundColor: '#003CB3',
         drawerLabelStyle: {
           color: 'green',
+        },
+        drawerStyle: {
+          //   backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+          padding: 10,
         },
       }}>
       <Screen

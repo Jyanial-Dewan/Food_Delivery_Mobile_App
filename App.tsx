@@ -1,7 +1,7 @@
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/navigations/RootStack';
-import React, {useCallback} from 'react';
-import {BackHandler, Linking, LogBox, Text, TextInput} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {LogBox, Text, TextInput} from 'react-native';
 import {ToastProvider} from './src/common/components/CustomToast';
 import {
   initialWindowMetrics,
@@ -10,7 +10,10 @@ import {
 import {PaperProvider} from 'react-native-paper';
 import {baseURL} from '@env';
 import {secureStorage} from './src/utils/Storage/mmkv';
-import DrawerTabs from './src/navigations/DrawerTabs';
+import {Provider, useDispatch} from 'react-redux';
+import {store} from './src/stores/Redux/Store/Store';
+import {Linking} from 'react-native';
+import {setToken} from './src/stores/Redux/Slices/UserSlice';
 // import delay from './src/services/delay';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
@@ -43,8 +46,16 @@ const linking: LinkingOptions<any> = {
     },
   },
 };
+const Main = () => {
+  const dispatch = useDispatch();
+  // const navigation = useNavigation<RootStackNavigationProp>();
+  useEffect(() => {
+    const user_token = JSON.parse(secureStorage.getItem('user_token'));
+    dispatch(setToken(user_token));
+    if (user_token?.access_token && user_token?.user_id) {
+    }
+  }, [dispatch]);
 
-const App = () => {
   const onReady = useCallback(async () => {
     try {
       const uri = await Linking.getInitialURL();
@@ -67,18 +78,23 @@ const App = () => {
   // // }
   // BackHandler.addEventListener('hardwareBackPress', backAction);
 
-  const user = secureStorage.getItem('user');
-
   return (
     <PaperProvider>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ToastProvider>
           <NavigationContainer linking={linking} onReady={onReady}>
-            {user ? <DrawerTabs /> : <RootStack />}
+            <RootStack />
           </NavigationContainer>
         </ToastProvider>
       </SafeAreaProvider>
     </PaperProvider>
+  );
+};
+const App = () => {
+  return (
+    <Provider store={store}>
+      <Main />
+    </Provider>
   );
 };
 
