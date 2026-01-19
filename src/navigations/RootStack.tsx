@@ -9,6 +9,8 @@ import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackScreensParms} from '../types/RootStactTypes';
+import Onboarding from '../modules/Onboarding/Onboarding';
+import SignUp from '../modules/SignUp/SignUp';
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackScreensParms>;
 
@@ -37,10 +39,12 @@ const RootStack = () => {
         headerShown: false,
       }}>
       {!userToken?.isLoggedIn ? (
-        <Screen name="LoginScreen" component={LoginScreen} />
+        <Screen name="Onboarding" component={Onboarding} />
       ) : (
         <Screen name="DrawerTabs" component={DrawerTabs} />
       )}
+      <Screen name="LoginScreen" component={LoginScreen} />
+      <Screen name="SignUpScreen" component={SignUp} />
     </Navigator>
   );
 };

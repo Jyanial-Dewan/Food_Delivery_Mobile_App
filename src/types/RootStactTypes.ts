@@ -5,4 +5,6 @@ export type RootStackScreensParms = {
   HomeScreen: undefined;
   Register: undefined;
   DrawerTabs: undefined;
+  Onboarding: undefined;
+  SignUpScreen: undefined;
 };

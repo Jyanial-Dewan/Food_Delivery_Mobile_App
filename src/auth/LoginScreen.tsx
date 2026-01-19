@@ -105,13 +105,13 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
         <View style={styles.footer}>
           <CustomButtonNew
             disabled={isLoading}
-            btnText="Login"
+            btnText="Sign in"
             isLoading={isLoading}
             onBtnPress={handleSubmit(onSubmit)}
             btnstyle={styles.btn}
             btnTextStyle={styles.btnTxt}
           />
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
             <Text style={styles.signUpText}>
               Don't have an account?{' '}
               <Text style={styles.underlineText}>Sign up</Text>
