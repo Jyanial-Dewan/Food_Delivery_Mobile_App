@@ -128,7 +128,7 @@ export default function Onboarding() {
         onMomentumScrollEnd={onScrollEnd}
         renderItem={({item}) => (
           <View style={[styles.page, {width}]}>
-            <View style={{height: 100}} />
+            {/* <View style={{height: 100}} /> */}
 
             <View style={{gap: 30, alignItems: 'center'}}>
               {/* Illustration */}
@@ -248,15 +248,13 @@ const styles = StyleSheet.create({
   },
 
   illustrationWrap: {
-    height: 260,
-    width: '100%',
+    height: 240,
+    width: 240,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
   },
   illustration: {
-    width: 350,
-    height: 350,
+    height: '120%',
     resizeMode: 'contain',
   },
 
@@ -266,7 +264,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 35,
+    fontSize: 33,
     fontWeight: '900',
     color: TEXT_DARK,
     textAlign: 'center',
@@ -274,7 +272,7 @@ const styles = StyleSheet.create({
   },
   desc: {
     marginTop: 10,
-    fontSize: 20,
+    fontSize: 15,
     color: TEXT_GRAY,
     textAlign: 'center',
     // width: '86%',
@@ -366,7 +364,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   orText: {
-    marginVertical: 10,
+    marginVertical: 5,
     color: TEXT_GRAY,
     fontWeight: '600',
   },

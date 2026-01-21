@@ -22,7 +22,7 @@ const Home = () => {
           />
         </TouchableOpacity>
         <View>
-          <Text>Welcome, {user}</Text>
+          <Text style={styles.text}>Welcome, {user}</Text>
         </View>
       </View>
     </ContainerNew>
@@ -38,5 +38,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 4,
     alignItems: 'center',
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'gray',
   },
 });

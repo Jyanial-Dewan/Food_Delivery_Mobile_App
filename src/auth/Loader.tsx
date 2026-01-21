@@ -41,11 +41,11 @@ const Loader = ({navigation}: any) => {
         if (
           isOnboarded !== 'true' &&
           !userToken?.access_token &&
-          !userToken.isLoggedIn
+          !userToken?.isLoggedIn
         ) {
           navigation.replace('Onboarding');
         } else {
-          if (userToken?.access_token && userToken.isLoggedIn) {
+          if (userToken?.access_token && userToken?.isLoggedIn) {
             navigation.replace('DrawerTabs');
           } else {
             navigation.replace('LoginScreen');
