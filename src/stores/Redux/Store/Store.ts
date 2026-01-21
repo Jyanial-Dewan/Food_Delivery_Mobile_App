@@ -1,8 +1,10 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {UserSlice} from '../Slices/UserSlice';
+import {HydrateSlice} from '../Slices/HydrateSlice';
 
 export const store = configureStore({
   reducer: {
+    hydrate: HydrateSlice.reducer,
     userToken: UserSlice.reducer,
   },
 });

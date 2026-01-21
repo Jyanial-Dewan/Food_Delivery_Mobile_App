@@ -113,7 +113,7 @@ export default function Onboarding() {
         {/* <Text style={styles.headerTitle}>Onboarding {index + 1}</Text> */}
         {/* <Text style={styles.logo}>Bobo</Text> */}
         <Image
-          source={require('../../assets/Logo/logo.png')}
+          source={require('../../assets/Logo/logo1.png')}
           style={styles.logoImage}
         />
       </View>
@@ -130,7 +130,7 @@ export default function Onboarding() {
           <View style={[styles.page, {width}]}>
             <View style={{height: 100}} />
 
-            <View style={{gap: 30}}>
+            <View style={{gap: 30, alignItems: 'center'}}>
               {/* Illustration */}
               <View style={styles.illustrationWrap}>
                 <Image source={item?.image} style={styles.illustration} />
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   signUpText: {
-    // color: COLORS.green,
+    color: COLORS.darkGray,
     // fontSize: 16,
     // fontWeight: 'bold',
     textAlign: 'center',

@@ -14,6 +14,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-Food_Delivery_Mobile_App-Food_Delivery_Mobile_AppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Food_Delivery_Mobile_App-Food_Delivery_Mobile_AppTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		EA0917025AF345B4B6936E86 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 949FBDC5848D4A1283671B27 /* BootSplash.storyboard */; };
+		82E22081357846AF9FA4680A /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0C4B82EE94DF689416273 /* Colors.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Food_Delivery_Mobile_App/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Food_Delivery_Mobile_App-Food_Delivery_Mobile_AppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Food_Delivery_Mobile_App-Food_Delivery_Mobile_AppTests.release.xcconfig"; path = "Target Support Files/Pods-Food_Delivery_Mobile_App-Food_Delivery_Mobile_AppTests/Pods-Food_Delivery_Mobile_App-Food_Delivery_Mobile_AppTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		949FBDC5848D4A1283671B27 /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "Food_Delivery_Mobile_App/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CFD0C4B82EE94DF689416273 /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "Food_Delivery_Mobile_App/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +96,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				949FBDC5848D4A1283671B27 /* BootSplash.storyboard */,
+				CFD0C4B82EE94DF689416273 /* Colors.xcassets */,
 			);
 			name = Food_Delivery_Mobile_App;
 			sourceTree = "<group>";
@@ -243,6 +249,8 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				EA0917025AF345B4B6936E86 /* BootSplash.storyboard in Resources */,
+				82E22081357846AF9FA4680A /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

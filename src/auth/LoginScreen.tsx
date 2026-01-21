@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   signUpText: {
-    // color: COLORS.green,
+    color: COLORS.darkGray,
     // fontSize: 16,
     // fontWeight: 'bold',
     textAlign: 'center',
