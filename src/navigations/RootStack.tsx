@@ -11,6 +11,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackScreensParms} from '../types/RootStactTypes';
 import Onboarding from '../modules/Onboarding/Onboarding';
 import SignUp from '../modules/SignUp/SignUp';
+import Loader from '../auth/Loader';
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackScreensParms>;
 
@@ -35,14 +36,13 @@ const RootStack = () => {
 
   return (
     <Navigator
+      initialRouteName="Loader"
       screenOptions={{
         headerShown: false,
       }}>
-      {!userToken?.isLoggedIn ? (
-        <Screen name="Onboarding" component={Onboarding} />
-      ) : (
-        <Screen name="DrawerTabs" component={DrawerTabs} />
-      )}
+      <Screen name="Loader" component={Loader} initialParams={{delay: 15}} />
+      <Screen name="Onboarding" component={Onboarding} />
+      <Screen name="DrawerTabs" component={DrawerTabs} />
       <Screen name="LoginScreen" component={LoginScreen} />
       <Screen name="SignUpScreen" component={SignUp} />
     </Navigator>
