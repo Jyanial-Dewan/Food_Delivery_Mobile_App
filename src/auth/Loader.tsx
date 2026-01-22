@@ -20,7 +20,7 @@ const Loader = ({navigation}: any) => {
   const userToken = useSelector((state: RootState) => state.userToken);
   const isOnboarded = secureStorage.getItem('isOnboarded');
   const hasNavigated = useRef(false);
-
+  console.log(userToken, 'userToken');
   useEffect(() => {
     dispatch(hydrateAuth());
   }, [dispatch]);
@@ -56,7 +56,13 @@ const Loader = ({navigation}: any) => {
         }
       });
     }
-  }, [isHydrated, isOnboarded, navigation, userToken]);
+  }, [
+    isHydrated,
+    isOnboarded,
+    navigation,
+    userToken?.access_token,
+    userToken?.isLoggedIn,
+  ]);
 
   return (
     <View

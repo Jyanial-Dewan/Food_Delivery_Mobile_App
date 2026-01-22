@@ -149,16 +149,15 @@ const ContainerNew: React.FC<ContainerNewProps> = ({
           enableAutomaticScroll
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          //@ts-ignore
           refreshControl={
-            isRefresh && (
+            isRefresh ? (
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 tintColor={COLORS.primary}
                 colors={[COLORS.yellow, COLORS.primary]}
               />
-            )
+            ) : undefined
           }
           style={styles.keyboard}>
           {children}

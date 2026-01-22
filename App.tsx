@@ -1,7 +1,7 @@
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/navigations/RootStack';
-import React, {useCallback, useEffect, useState} from 'react';
-import {LogBox, Text, TextInput, useColorScheme} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {LogBox, Text, TextInput} from 'react-native';
 import {ToastProvider} from './src/common/components/CustomToast';
 import {
   initialWindowMetrics,
@@ -10,13 +10,12 @@ import {
 import {PaperProvider, MD3LightTheme, MD3DarkTheme} from 'react-native-paper';
 import {baseURL} from '@env';
 import {secureStorage} from './src/utils/Storage/mmkv';
-import {Provider, useDispatch} from 'react-redux';
-import {store} from './src/stores/Redux/Store/Store';
+import {Provider, useDispatch, useSelector} from 'react-redux';
+import {RootState, store} from './src/stores/Redux/Store/Store';
 import {Linking} from 'react-native';
 import {setToken} from './src/stores/Redux/Slices/UserSlice';
 import {COLORS} from './src/common/constant/Themes';
-import {StatusBar} from 'react-native';
-// import delay from './src/services/delay';
+import {setTheme} from './src/stores/Redux/Slices/ThemeSlice';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
@@ -75,17 +74,18 @@ const customLightTheme = {
 
 const Main = () => {
   const dispatch = useDispatch();
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
   // const navigation = useNavigation<RootStackNavigationProp>();
-  const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
-  console.log(colorScheme, 'colorScheme');
-  const theme = isDarkMode ? customDarkTheme : customLightTheme;
+  const selectedTheme = useSelector((state: RootState) => state.theme.theme);
+  const theme = selectedTheme === 'dark' ? customDarkTheme : customLightTheme;
 
   useEffect(() => {
+    const localTheme = secureStorage.getItem('theme');
+    if (localTheme) {
+      dispatch(setTheme(localTheme));
+    }
     const user_token = JSON.parse(secureStorage.getItem('user_token'));
     dispatch(setToken(user_token));
-    if (user_token?.access_token && user_token?.user_id) {
-    }
   }, [dispatch]);
 
   const onReady = useCallback(async () => {
@@ -112,11 +112,11 @@ const Main = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+      {/* <StatusBar
+        barStyle={selectedTheme !== 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor={theme.colors.background}
         animated={true}
-      />
+      /> */}
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ToastProvider>
           <NavigationContainer linking={linking} onReady={onReady}>

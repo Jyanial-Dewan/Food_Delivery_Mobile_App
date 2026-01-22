@@ -12,6 +12,7 @@ import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
 import {clearToken} from '../stores/Redux/Slices/UserSlice';
 import {useTheme} from 'react-native-paper';
+import {setTheme} from '../stores/Redux/Slices/ThemeSlice';
 
 const {Navigator, Screen} = createDrawerNavigator();
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
@@ -56,9 +57,13 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     },
   ];
 
+  const handleThemeChange = () => {
+    dispatch(setTheme(theme.dark ? 'light' : 'dark'));
+    secureStorage.setItem('theme', theme.dark ? 'light' : 'dark');
+  };
   return (
     <DrawerContentScrollView {...props}>
-      <TouchableOpacity onPress={() => {}} style={styles.mode}>
+      <TouchableOpacity onPress={handleThemeChange} style={styles.mode}>
         <Icon
           name={theme.dark ? 'dark-mode' : 'light-mode'}
           size={22}
