@@ -132,7 +132,6 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           </TouchableOpacity>
         </View>
       }>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
       <View>
         <Text style={[styles.title, {color: theme.colors.surface}]}>
           Log into your account

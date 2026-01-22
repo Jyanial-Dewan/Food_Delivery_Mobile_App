@@ -1,12 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import Container from '../../common/components/Container';
 import {useForm} from 'react-hook-form';
 import {COLORS} from '../../common/constant/Themes';
@@ -119,7 +112,6 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
           </TouchableOpacity>
         </View>
       }>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
       <View>
         <Text style={styles.title}>Create a new account</Text>
       </View>

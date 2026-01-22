@@ -15,6 +15,7 @@ import {store} from './src/stores/Redux/Store/Store';
 import {Linking} from 'react-native';
 import {setToken} from './src/stores/Redux/Slices/UserSlice';
 import {COLORS} from './src/common/constant/Themes';
+import {StatusBar} from 'react-native';
 // import delay from './src/services/delay';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
@@ -111,6 +112,11 @@ const Main = () => {
 
   return (
     <PaperProvider theme={theme}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.colors.background}
+        animated={true}
+      />
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ToastProvider>
           <NavigationContainer linking={linking} onReady={onReady}>
