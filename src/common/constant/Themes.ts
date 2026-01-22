@@ -12,16 +12,21 @@ export const SIZES = {
   height,
 };
 export const COLORS = {
-  // base colors'
-  lightPrimary: 'rgba(127, 103, 190, 1)',
-  // primary: '#FB1A20', // Color change to default react-native-paper color  // Old Color > blue '#4D5AFF'
-  primary: '#3786E6',
-  secondary: '#5C5C5C', // gray
+  primary: '#59a817',
+  secondaryDarkButton: '#3b3f38',
+  secondaryLightButton: '#ecf1e8',
+  darkThemeBackground: '#262725',
+  darkThemeOnBackground: '#FFFFFF',
+  titleLightPrimary: '#1E1E1E',
+  titleLightSecondary: '#363a33',
+  titleDarkPrimary: '#eef0ed',
+  titleDarkSecondary: '#c8c9c7',
+
   border: '#9C9C9E', // textNewColor
   lightGray: '#B6C1CF', //lightgray
   darkGray: '#6C6C6E',
-  primaryBtn: '#3786E6',
-  highLight: '#79a37c26',
+  primaryBtn: '#59a817',
+  highLight: '#9bd66aff',
   notifcationIconBorder: '#D8E5F8',
   lightBackground: '#F9FAFB',
   borderColor: '#D3DCE7',

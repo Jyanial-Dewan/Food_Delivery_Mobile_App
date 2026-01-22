@@ -9,8 +9,10 @@ import {hydrateAuth} from '../stores/Redux/Hydrate/HydrateAuth';
 import {AppDispatch} from '../stores/Redux/Store/Store';
 import delay from '../common/services/delay';
 import {secureStorage} from '../utils/Storage/mmkv';
+import {useTheme} from 'react-native-paper';
 
 const Loader = ({navigation}: any) => {
+  const theme = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const isHydrated = useSelector(
     (state: RootState) => state.hydrate.isHydrated,
@@ -62,22 +64,29 @@ const Loader = ({navigation}: any) => {
   ]);
 
   return (
-    <View style={styles.center}>
-      <Image style={styles.logo} source={IMAGES.AppLogo} />
+    <View
+      style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      <View style={styles.center}>
+        <Image style={styles.logo} source={IMAGES.AppLogo} />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  center: {
+  container: {
     justifyContent: Platform.OS === 'ios' ? 'flex-start' : 'center',
     paddingTop: Platform.OS === 'ios' ? SIZES.height / 2.6 : 0.001,
     backgroundColor: COLORS.white,
     flex: 1,
   },
+  center: {
+    height: Platform.OS === 'ios' ? '30%' : '30%',
+    justifyContent: 'center',
+  },
   logo: {
-    // width: Platform.OS === 'ios' ? 90 : 100,
-    // height: Platform.OS === 'ios' ? 98 : 90,
+    width: '24%',
+    height: '54%',
     alignSelf: 'center',
   },
 });

@@ -1,19 +1,20 @@
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/navigations/RootStack';
-import React, {useCallback, useEffect} from 'react';
-import {LogBox, Text, TextInput} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {LogBox, Text, TextInput, useColorScheme} from 'react-native';
 import {ToastProvider} from './src/common/components/CustomToast';
 import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import {PaperProvider} from 'react-native-paper';
+import {PaperProvider, MD3LightTheme, MD3DarkTheme} from 'react-native-paper';
 import {baseURL} from '@env';
 import {secureStorage} from './src/utils/Storage/mmkv';
 import {Provider, useDispatch} from 'react-redux';
 import {store} from './src/stores/Redux/Store/Store';
 import {Linking} from 'react-native';
 import {setToken} from './src/stores/Redux/Slices/UserSlice';
+import {COLORS} from './src/common/constant/Themes';
 // import delay from './src/services/delay';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
@@ -46,9 +47,39 @@ const linking: LinkingOptions<any> = {
     },
   },
 };
+
+const customDarkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    background: COLORS.darkThemeBackground, //background
+    onBackground: COLORS.darkThemeOnBackground,
+    primary: COLORS.primary, //primary color green
+    surface: COLORS.titleDarkPrimary, //text color
+    secondary: COLORS.secondaryDarkButton, //secondaryDarkButton
+  },
+};
+
+const customLightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    background: COLORS.white, //background
+    onBackground: COLORS.darkThemeOnBackground,
+    primary: COLORS.primary, //primary color green
+    surface: COLORS.titleLightSecondary, //text color
+    secondary: COLORS.secondaryLightButton, //secondaryLightButton
+  },
+};
+
 const Main = () => {
   const dispatch = useDispatch();
+  const colorScheme = useColorScheme();
   // const navigation = useNavigation<RootStackNavigationProp>();
+  const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
+  console.log(colorScheme, 'colorScheme');
+  const theme = isDarkMode ? customDarkTheme : customLightTheme;
+
   useEffect(() => {
     const user_token = JSON.parse(secureStorage.getItem('user_token'));
     dispatch(setToken(user_token));
@@ -79,7 +110,7 @@ const Main = () => {
   // BackHandler.addEventListener('hardwareBackPress', backAction);
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ToastProvider>
           <NavigationContainer linking={linking} onReady={onReady}>

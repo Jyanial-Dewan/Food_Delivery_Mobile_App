@@ -15,7 +15,7 @@ import CustomTextNew from '../../common/components/CustomText';
 import CustomInputNew from '../../common/components/CustomInput';
 import Row from '../../common/components/Row';
 import CustomButtonNew from '../../common/components/CustomButton';
-import {Checkbox} from 'react-native-paper';
+import {Checkbox, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../../common/components/CustomToast';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -33,6 +33,7 @@ interface SignUpScreenProps {
 }
 
 const SignUp = ({navigation}: SignUpScreenProps) => {
+  const theme = useTheme();
   const [showPass, setShowPass] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(true);
@@ -93,7 +94,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
       header={
         <View style={styles.header}>
           <Image
-            source={require('../../assets/Logo/logo.png')}
+            source={require('../../assets/Logo/logo1.png')}
             style={styles.logoImage}
           />
         </View>
@@ -110,7 +111,10 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
           />
           <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
             <Text style={styles.signUpText}>
-              Have an account? <Text style={styles.underlineText}>Sign in</Text>
+              Have an account?{' '}
+              <Text style={[styles.underlineText, {color: COLORS.primary}]}>
+                Sign in
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -183,8 +187,6 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             defaultValue={getValues('phone')}
             defaultCode="BD"
             layout="first"
-            // onChangeText={text => {
-            // }}
             onChangeFormattedText={text => {
               setValue('phone', text);
               // setFormattedValue(text);
@@ -199,12 +201,14 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
               backgroundColor: '#f9f9f9',
             }}
             textInputStyle={{
-              color: COLORS.black,
               fontSize: 16,
               height: 50,
               fontWeight: '500',
             }}
-            withDarkTheme
+            codeTextStyle={{
+              color: '#757775ff',
+            }}
+            // withDarkTheme
             // withShadow
             // autoFocus
           />
@@ -283,7 +287,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             align="center">
             <Checkbox.Item
               style={{marginVertical: 0, paddingHorizontal: 0}}
-              labelStyle={{color: COLORS.headerText, paddingLeft: 0}}
+              labelStyle={{color: theme.colors.surface, paddingLeft: 0}}
               label="I agree to terms & conditions"
               status={checked ? 'checked' : 'unchecked'}
               onPress={() => {
@@ -302,7 +306,6 @@ export default SignUp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
     paddingBottom: 16,
     paddingHorizontal: 16,
   },
@@ -317,7 +320,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.headerText,
   },
   logoImage: {
     width: 80,
@@ -326,15 +328,12 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 10,
-    backgroundColor: COLORS.green,
   },
   btnTxt: {
-    color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
   forgotPassword: {
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -342,7 +341,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 30,
     fontWeight: '900',
-    color: '#1E1E1E',
     textAlign: 'center',
     lineHeight: 35,
   },
@@ -351,14 +349,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   signUpText: {
-    // color: COLORS.green,
-    // fontSize: 16,
-    // fontWeight: 'bold',
     textAlign: 'center',
   },
   underlineText: {
     textDecorationLine: 'underline',
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },

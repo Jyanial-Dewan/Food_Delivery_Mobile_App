@@ -16,6 +16,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Edge, SafeAreaView} from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS} from '../constant/Themes';
+import {useTheme} from 'react-native-paper';
 // import CustomTextNew from './CustomText';
 
 const wait = (timeout: number) => {
@@ -87,6 +88,7 @@ const ContainerNew: React.FC<ContainerNewProps> = ({
   backgroundColor,
   ...rest
 }) => {
+  const theme = useTheme();
   const [_isShowBar, setIsShowBar] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -136,6 +138,7 @@ const ContainerNew: React.FC<ContainerNewProps> = ({
         backgroundColor
           ? {backgroundColor: backgroundColor}
           : {backgroundColor: COLORS.white},
+        {backgroundColor: theme.colors.background},
       ]}>
       {header}
       {isKeyboardAware ? (

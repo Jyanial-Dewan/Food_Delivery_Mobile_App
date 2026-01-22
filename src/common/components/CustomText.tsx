@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {COLORS} from '../constant/Themes';
+import {useTheme} from 'react-native-paper';
 
 interface Props extends React.ComponentProps<typeof Text> {
   text?: string | number;
@@ -40,6 +41,7 @@ const CustomTextNew: React.FC<Props> = ({
   textDecorationLine,
   ...otherProps
 }: Props) => {
+  const theme = useTheme();
   return (
     <Fragment>
       {text ? (
@@ -49,11 +51,7 @@ const CustomTextNew: React.FC<Props> = ({
             style={[
               styles.txt,
               txtStyle || {
-                color: txtColor
-                  ? txtColor
-                  : subTxt
-                    ? COLORS.graySubText
-                    : COLORS.textNewColor,
+                color: theme.colors.surface,
                 fontWeight: txtWeight,
                 fontSize: txtSize,
                 textAlign: txtAlign,
