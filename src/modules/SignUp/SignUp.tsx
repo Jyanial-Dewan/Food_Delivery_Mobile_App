@@ -11,15 +11,18 @@ import CustomButtonNew from '../../common/components/CustomButton';
 import {Checkbox, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../../common/components/CustomToast';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackScreensParms} from '../../types/RootStactTypes';
 import {ISignUpPayloadType} from '../../types/GeneralTypes';
 import {httpRequest} from '../../common/constant/httpRequest';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
 import PhoneInput from 'react-native-phone-number-input';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-type StackNavProps = StackNavigationProp<RootStackScreensParms, 'LoginScreen'>;
+type StackNavProps = NativeStackNavigationProp<
+  RootStackScreensParms,
+  'LoginScreen'
+>;
 
 interface SignUpScreenProps {
   navigation: StackNavProps;
@@ -47,7 +50,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
   });
   // console.log(formattedValue, 'formattedValue');
   const onSubmit = async (data: ISignUpPayloadType) => {
-    console.log(data, 'data');
+    // console.log(data, 'data');
     const loginPayload = {
       username: data?.username?.trim(),
       user_type: data?.user_type?.trim(),
@@ -68,7 +71,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
     };
 
     const res = await httpRequest(api_params, setIsLoading);
-    console.log(res, 'res');
+    // console.log(res, 'res');
 
     // {"data": {"created_at": "2026-01-21T11:16:56.866Z", "email": "nepockma1@gmail.com", "first_name": "Nepo", "last_name": "Ckma", "phone": ["1517832317"], "user_id": 8, "user_type": "USER", "username": "nepockma11"}, "status": 201, "success": true}
     if (res?.status === 201 && res?.success) {

@@ -22,7 +22,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const handleLogOut = () => {
     secureStorage.removeItem('user_token');
     dispatch(clearToken());
-    console.log('logout');
+    props.navigation.reset({
+      index: 0,
+      routes: [{name: 'LoginScreen'}],
+    });
+    // console.log('logout');
   };
 
   const isActive = (routeName: string) => {
@@ -105,6 +109,9 @@ const DrawerTabs = () => {
         drawerStyle: {
           backgroundColor: theme.colors.background,
           padding: 10,
+        },
+        drawerContentStyle: {
+          backgroundColor: theme.colors.background,
         },
       }}>
       <Screen

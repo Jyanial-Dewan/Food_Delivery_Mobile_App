@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Image, Platform, StyleSheet, View} from 'react-native';
 import {COLORS, IMAGES, SIZES} from '../common/constant/Index';
 import BootSplash from 'react-native-bootsplash';
@@ -19,8 +19,8 @@ const Loader = ({navigation}: any) => {
   );
   const userToken = useSelector((state: RootState) => state.userToken);
   const isOnboarded = secureStorage.getItem('isOnboarded');
-  console.log(userToken, 'token');
-  console.log(isOnboarded, 'isonboard');
+  const hasNavigated = useRef(false);
+
   useEffect(() => {
     dispatch(hydrateAuth());
   }, [dispatch]);
@@ -39,7 +39,9 @@ const Loader = ({navigation}: any) => {
   }, [isHydrated]);
 
   useEffect(() => {
-    if (isHydrated) {
+    if (isHydrated && !hasNavigated.current) {
+      hasNavigated.current = true;
+
       delay(1000).then(() => {
         if (
           isOnboarded !== 'true' &&
@@ -47,24 +49,14 @@ const Loader = ({navigation}: any) => {
           !userToken?.isLoggedIn
         ) {
           navigation.replace('Onboarding');
+        } else if (userToken?.access_token && userToken?.isLoggedIn) {
+          navigation.replace('DrawerTabs');
         } else {
-          if (userToken?.access_token !== '' && userToken?.isLoggedIn) {
-            navigation.replace('DrawerTabs');
-            console.log('first');
-          } else {
-            navigation.replace('LoginScreen');
-            console.log('second');
-          }
+          navigation.replace('LoginScreen');
         }
       });
     }
-  }, [
-    isHydrated,
-    isOnboarded,
-    navigation,
-    userToken?.access_token,
-    userToken?.isLoggedIn,
-  ]);
+  }, [isHydrated, isOnboarded, navigation, userToken]);
 
   return (
     <View

@@ -1,12 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import Container from '../common/components/Container';
 import {useForm} from 'react-hook-form';
 import {COLORS} from '../common/constant/Themes';
@@ -19,7 +12,6 @@ import {Checkbox, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../common/components/CustomToast';
 import {useIsFocused} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackScreensParms} from '../types/RootStactTypes';
 import {ILogInPayloadType} from '../types/GeneralTypes';
 import {httpRequest} from '../common/constant/httpRequest';
@@ -28,8 +20,12 @@ import {BaseURL} from '../../App';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
 import {setToken} from '../stores/Redux/Slices/UserSlice';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-type StackNavProps = StackNavigationProp<RootStackScreensParms, 'LoginScreen'>;
+type StackNavProps = NativeStackNavigationProp<
+  RootStackScreensParms,
+  'LoginScreen'
+>;
 
 interface LoginScreenProps {
   navigation: StackNavProps;
@@ -90,7 +86,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
       dispatch(setToken(res?.data));
       secureStorage.setItem('user_token', JSON.stringify(res?.data));
-      // navigation.replace('DrawerTabs');
+      navigation.replace('DrawerTabs');
     } else {
       toaster.show({message: res?.data?.message, type: 'warning'});
     }
