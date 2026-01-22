@@ -60,9 +60,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     <DrawerContentScrollView {...props}>
       <TouchableOpacity onPress={() => {}} style={styles.mode}>
         <Icon
-          name={theme ? 'dark-mode' : 'light-mode'}
+          name={theme.dark ? 'dark-mode' : 'light-mode'}
           size={22}
-          color={theme ? 'white' : 'green'}
+          color={theme.dark ? 'white' : 'green'}
         />
       </TouchableOpacity>
       {links.map((link, index) => (
