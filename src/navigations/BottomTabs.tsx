@@ -7,11 +7,21 @@ import Cart from '../modules/Cart/Cart';
 import Notification from '../modules/Notification/Notification';
 import Favorite from '../modules/Favorite/Favorite';
 import {COLORS} from '../common/constant/Themes';
+import {useTheme} from 'react-native-paper';
 
 const {Navigator, Screen} = createBottomTabNavigator();
 const BottomTabs = () => {
+  const theme = useTheme();
   return (
-    <Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+    <Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme.colors.background,
+          borderColor: theme.colors.background,
+        },
+      }}>
       <Screen
         name="Home"
         component={Home}

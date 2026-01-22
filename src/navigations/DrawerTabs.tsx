@@ -6,60 +6,88 @@ import {
 } from '@react-navigation/drawer';
 import BottomTabs from './BottomTabs';
 import Profile from '../modules/Profile/Profile';
-import {StyleSheet, Text, TouchableOpacity, useColorScheme} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
 import {clearToken} from '../stores/Redux/Slices/UserSlice';
+import {useTheme} from 'react-native-paper';
 
 const {Navigator, Screen} = createDrawerNavigator();
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const theme = useTheme();
   const activeRoute = props.state.routes[props.state.index];
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
     secureStorage.removeItem('user_token');
     dispatch(clearToken());
+    console.log('logout');
   };
 
   const isActive = (routeName: string) => {
     return activeRoute.name === routeName;
   };
 
+  const links = [
+    {
+      name: 'Home',
+      icon: 'home',
+      screen: 'BottomTabs',
+    },
+    {
+      name: 'Profile',
+      icon: 'person',
+      screen: 'Profile',
+    },
+    // {
+    //   name: 'Settings',
+    //   icon: 'settings',
+    //   screen: 'Settings',
+    // },
+    {
+      name: 'Log Out',
+      icon: 'logout',
+      screen: 'LogOut',
+    },
+  ];
+
   return (
     <DrawerContentScrollView {...props}>
       <TouchableOpacity onPress={() => {}} style={styles.mode}>
         <Icon
-          name={isDarkMode ? 'dark-mode' : 'light-mode'}
+          name={theme ? 'dark-mode' : 'light-mode'}
           size={22}
-          color={isDarkMode ? 'white' : 'green'}
+          color={theme ? 'white' : 'green'}
         />
       </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate('BottomTabs')}
-        style={[styles.link, isActive('BottomTabs') && styles.activeLink]}>
-        <Text
-          style={[styles.text, isActive('BottomTabs') && styles.activeText]}>
-          Home
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate('Profile')}
-        style={[styles.link, isActive('Profile') && styles.activeLink]}>
-        <Text style={[styles.text, isActive('Profile') && styles.activeText]}>
-          Profile
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleLogOut} style={styles.link}>
-        <Text style={styles.text}>LogOut</Text>
-      </TouchableOpacity>
+      {links.map((link, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() =>
+            link.screen === 'LogOut'
+              ? handleLogOut()
+              : props.navigation.navigate(link.screen)
+          }
+          style={[
+            styles.link,
+            isActive(link.screen) && {backgroundColor: theme.colors.primary},
+          ]}>
+          <Text
+            style={[
+              styles.text,
+              isActive(link.screen) && styles.activeText,
+              {color: theme.colors.surface},
+            ]}>
+            {link.name}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </DrawerContentScrollView>
   );
 };
 const DrawerTabs = () => {
+  const theme = useTheme();
   return (
     <Navigator
       initialRouteName="BottomTabs"
@@ -75,7 +103,7 @@ const DrawerTabs = () => {
           color: 'green',
         },
         drawerStyle: {
-          //   backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+          backgroundColor: theme.colors.background,
           padding: 10,
         },
       }}>
@@ -113,7 +141,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: '500',
-    color: '#333',
   },
   activeText: {
     // color: 'white',

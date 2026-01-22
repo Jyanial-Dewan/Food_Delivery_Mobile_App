@@ -4,8 +4,10 @@ import {secureStorage} from '../../utils/Storage/mmkv';
 import {useNavigation} from '@react-navigation/native';
 import ContainerNew from '../../common/components/Container';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useTheme} from 'react-native-paper';
 
 const Home = () => {
+  const theme = useTheme();
   const drawerNav = useNavigation<any>();
   const user = secureStorage.getItem('user');
   console.log(user);
@@ -22,7 +24,9 @@ const Home = () => {
           />
         </TouchableOpacity>
         <View>
-          <Text style={styles.text}>Welcome, {user}</Text>
+          <Text style={[styles.text, {color: theme.colors.surface}]}>
+            Welcome, {user}
+          </Text>
         </View>
       </View>
     </ContainerNew>

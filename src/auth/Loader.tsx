@@ -19,7 +19,8 @@ const Loader = ({navigation}: any) => {
   );
   const userToken = useSelector((state: RootState) => state.userToken);
   const isOnboarded = secureStorage.getItem('isOnboarded');
-
+  console.log(userToken, 'token');
+  console.log(isOnboarded, 'isonboard');
   useEffect(() => {
     dispatch(hydrateAuth());
   }, [dispatch]);
@@ -47,10 +48,12 @@ const Loader = ({navigation}: any) => {
         ) {
           navigation.replace('Onboarding');
         } else {
-          if (userToken?.access_token && userToken?.isLoggedIn) {
+          if (userToken?.access_token !== '' && userToken?.isLoggedIn) {
             navigation.replace('DrawerTabs');
+            console.log('first');
           } else {
             navigation.replace('LoginScreen');
+            console.log('second');
           }
         }
       });
