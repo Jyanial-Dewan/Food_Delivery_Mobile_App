@@ -8,7 +8,7 @@ interface ThemeSelectionState {
 
 // Define initial state using Song type
 const initialState: ThemeSelectionState = {
-  theme: 'light',
+  theme: '',
 };
 
 // Create slice with typed actions and reducers

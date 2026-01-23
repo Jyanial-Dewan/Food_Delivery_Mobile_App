@@ -1,7 +1,7 @@
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/navigations/RootStack';
 import React, {useCallback, useEffect} from 'react';
-import {LogBox, Text, TextInput} from 'react-native';
+import {LogBox, Text, TextInput, useColorScheme} from 'react-native';
 import {ToastProvider} from './src/common/components/CustomToast';
 import {
   initialWindowMetrics,
@@ -74,9 +74,15 @@ const customLightTheme = {
 
 const Main = () => {
   const dispatch = useDispatch();
-  // const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
   // const navigation = useNavigation<RootStackNavigationProp>();
   const selectedTheme = useSelector((state: RootState) => state.theme.theme);
+
+  useEffect(() => {
+    if (!selectedTheme) {
+      dispatch(setTheme(colorScheme === 'dark' ? 'dark' : 'light'));
+    }
+  }, [selectedTheme, colorScheme, dispatch]);
   const theme = selectedTheme === 'dark' ? customDarkTheme : customLightTheme;
 
   useEffect(() => {

@@ -161,6 +161,9 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             control={control}
             onSelect={setValue}
             placeholder="Choose user type"
+            rules={{
+              required: 'User type is required',
+            }}
           />
         </Column>
         <Column style={{marginTop: 10}}>
@@ -196,20 +199,8 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
               setValue('phone', text);
               // setFormattedValue(text);
             }}
-            containerStyle={{
-              borderWidth: 1,
-              borderColor: COLORS.offDay,
-              height: 50,
-              width: '100%',
-              paddingHorizontal: 3,
-              borderRadius: 8,
-              backgroundColor: '#f9f9f9',
-            }}
-            textInputStyle={{
-              fontSize: 16,
-              height: 50,
-              fontWeight: '500',
-            }}
+            containerStyle={styles.phoneContainer}
+            textInputStyle={styles.phoneTextInput}
             codeTextStyle={{
               color: '#757775ff',
             }}
@@ -330,6 +321,23 @@ const styles = StyleSheet.create({
     width: 80,
     // height: 80,
     resizeMode: 'contain',
+  },
+  phoneContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.offDay,
+    // height: 50,
+    width: '100%',
+    paddingHorizontal: 3,
+    paddingVertical: 0,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  phoneTextInput: {
+    // fontSize: 16,
+    // height: 50,
+    fontWeight: '500',
+    color: '#757775',
+    padding: 0,
   },
   btn: {
     borderRadius: 10,

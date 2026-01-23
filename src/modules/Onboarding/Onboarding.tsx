@@ -200,14 +200,16 @@ export default function Onboarding() {
                     onPress={() => handleLogin()}>
                     <Text style={styles.loginText}>Login with Email</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('SignUpScreen')}>
+                  <View style={styles.signUpContainer}>
                     <Text
                       style={[
                         styles.signUpText,
                         {color: theme.colors.surface},
                       ]}>
                       Don't have an account?{' '}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('SignUpScreen')}>
                       <Text
                         style={[
                           styles.underlineText,
@@ -215,8 +217,8 @@ export default function Onboarding() {
                         ]}>
                         Sign up
                       </Text>
-                    </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
                   <Text style={styles.orText}>or</Text>
 
                   <View style={styles.socialRow}>
@@ -375,6 +377,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '800',
     fontSize: 14,
+  },
+  signUpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signUpText: {
     textAlign: 'center',
