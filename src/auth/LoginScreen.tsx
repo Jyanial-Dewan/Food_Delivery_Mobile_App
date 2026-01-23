@@ -117,15 +117,18 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             btnstyle={[styles.btn, {backgroundColor: theme.colors.primary}]}
             btnTextStyle={styles.btnTxt}
           />
-          <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
+          <View style={styles.signUpContainer}>
             <Text style={[styles.signUpText, {color: theme.colors.surface}]}>
               Don't have an account?{' '}
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SignUpScreen')}>
               <Text
                 style={[styles.underlineText, {color: theme.colors.primary}]}>
                 Sign up
               </Text>
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         </View>
       }>
       <View>
@@ -244,6 +247,7 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   forgotPassword: {
     fontSize: 16,
@@ -258,6 +262,11 @@ const styles = StyleSheet.create({
   footer: {
     padding: 8,
     gap: 8,
+  },
+  signUpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signUpText: {
     textAlign: 'center',

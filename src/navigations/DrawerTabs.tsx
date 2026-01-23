@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/drawer';
 import BottomTabs from './BottomTabs';
 import Profile from '../modules/Profile/Profile';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
@@ -63,13 +63,15 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   };
   return (
     <DrawerContentScrollView {...props}>
-      <TouchableOpacity onPress={handleThemeChange} style={styles.mode}>
-        <Icon
-          name={theme.dark ? 'dark-mode' : 'light-mode'}
-          size={22}
-          color={theme.dark ? 'white' : 'green'}
-        />
-      </TouchableOpacity>
+      <View style={styles.mode}>
+        <TouchableOpacity onPress={handleThemeChange}>
+          <Icon
+            name={theme.dark ? 'dark-mode' : 'light-mode'}
+            size={22}
+            color={theme.dark ? 'white' : 'green'}
+          />
+        </TouchableOpacity>
+      </View>
       {links.map((link, index) => (
         <TouchableOpacity
           key={index}
@@ -141,7 +143,7 @@ const DrawerTabs = () => {
 
 export default DrawerTabs;
 const styles = StyleSheet.create({
-  mode: {padding: 5},
+  mode: {flexDirection: 'row', justifyContent: 'flex-end', padding: 5},
   link: {
     // backgroundColor: '#f0f0f0',
     padding: 12,

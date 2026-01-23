@@ -18,6 +18,7 @@ import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
 import PhoneInput from 'react-native-phone-number-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Select from '../../common/components/Select';
 
 type StackNavProps = NativeStackNavigationProp<
   RootStackScreensParms,
@@ -83,6 +84,11 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
     }
   };
 
+  const options = [
+    {label: 'User', value: 'USER'},
+    {label: 'Restaurant', value: 'RESTAURANT'},
+    {label: 'Delivery', value: 'DELIVERY'},
+  ];
   return (
     <Container
       // isScrollView={false}
@@ -102,21 +108,27 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             btnText="Create account"
             isLoading={isLoading}
             onBtnPress={handleSubmit(onSubmit)}
-            btnstyle={styles.btn}
+            btnstyle={[styles.btn, {backgroundColor: theme.colors.primary}]}
             btnTextStyle={styles.btnTxt}
           />
-          <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-            <Text style={styles.signUpText}>
-              Have an account?{' '}
-              <Text style={[styles.underlineText, {color: COLORS.primary}]}>
+          <View style={styles.signInContainer}>
+            <Text style={[styles.signInText, {color: theme.colors.surface}]}>
+              Don't have an account?{' '}
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('LoginScreen')}>
+              <Text
+                style={[styles.underlineText, {color: theme.colors.primary}]}>
                 Sign in
               </Text>
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         </View>
       }>
       <View>
-        <Text style={styles.title}>Create a new account</Text>
+        <Text style={[styles.title, {color: theme.colors.onSurface}]}>
+          Create a new account
+        </Text>
       </View>
       <Column>
         <Column>
@@ -143,14 +155,12 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             txtWeight={'500'}
             padBottom={10}
           />
-          <CustomInputNew
-            setValue={setValue}
-            control={control}
+          <Select
+            options={options}
             name="user_type"
-            label="Enter your user type"
-            rules={{
-              required: 'User type is required',
-            }}
+            control={control}
+            onSelect={setValue}
+            placeholder="Choose user type"
           />
         </Column>
         <Column style={{marginTop: 10}}>
@@ -327,6 +337,7 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   forgotPassword: {
     fontSize: 16,
@@ -343,7 +354,12 @@ const styles = StyleSheet.create({
     padding: 8,
     gap: 8,
   },
-  signUpText: {
+  signInContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signInText: {
     textAlign: 'center',
   },
   underlineText: {
