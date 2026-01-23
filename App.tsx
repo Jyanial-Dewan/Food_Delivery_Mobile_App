@@ -7,14 +7,15 @@ import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import {PaperProvider} from 'react-native-paper';
+import {PaperProvider, MD3LightTheme, MD3DarkTheme} from 'react-native-paper';
 import {baseURL} from '@env';
 import {secureStorage} from './src/utils/Storage/mmkv';
-import {Provider, useDispatch} from 'react-redux';
-import {store} from './src/stores/Redux/Store/Store';
+import {Provider, useDispatch, useSelector} from 'react-redux';
+import {RootState, store} from './src/stores/Redux/Store/Store';
 import {Linking} from 'react-native';
 import {setToken} from './src/stores/Redux/Slices/UserSlice';
-// import delay from './src/services/delay';
+import {COLORS} from './src/common/constant/Themes';
+import {setTheme} from './src/stores/Redux/Slices/ThemeSlice';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
@@ -46,14 +47,45 @@ const linking: LinkingOptions<any> = {
     },
   },
 };
+
+const customDarkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    background: COLORS.darkThemeBackground, //background
+    onBackground: COLORS.darkThemeOnBackground,
+    primary: COLORS.primary, //primary color green
+    surface: COLORS.titleDarkPrimary, //text color
+    secondary: COLORS.secondaryDarkButton, //secondaryDarkButton
+  },
+};
+
+const customLightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    background: COLORS.white, //background
+    onBackground: COLORS.darkThemeOnBackground,
+    primary: COLORS.primary, //primary color green
+    surface: COLORS.titleLightSecondary, //text color
+    secondary: COLORS.secondaryLightButton, //secondaryLightButton
+  },
+};
+
 const Main = () => {
   const dispatch = useDispatch();
+  // const colorScheme = useColorScheme();
   // const navigation = useNavigation<RootStackNavigationProp>();
+  const selectedTheme = useSelector((state: RootState) => state.theme.theme);
+  const theme = selectedTheme === 'dark' ? customDarkTheme : customLightTheme;
+
   useEffect(() => {
+    const localTheme = secureStorage.getItem('theme');
+    if (localTheme) {
+      dispatch(setTheme(localTheme));
+    }
     const user_token = JSON.parse(secureStorage.getItem('user_token'));
     dispatch(setToken(user_token));
-    if (user_token?.access_token && user_token?.user_id) {
-    }
   }, [dispatch]);
 
   const onReady = useCallback(async () => {
@@ -79,7 +111,12 @@ const Main = () => {
   // BackHandler.addEventListener('hardwareBackPress', backAction);
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
+      {/* <StatusBar
+        barStyle={selectedTheme !== 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.colors.background}
+        animated={true}
+      /> */}
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ToastProvider>
           <NavigationContainer linking={linking} onReady={onReady}>

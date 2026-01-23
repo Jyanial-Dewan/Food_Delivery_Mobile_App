@@ -12,8 +12,8 @@ import {
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {COLORS} from '../../common/constant/Themes';
 import {secureStorage} from '../../utils/Storage/mmkv';
+import {useTheme} from 'react-native-paper';
 
 const {width} = Dimensions.get('window');
 
@@ -25,11 +25,6 @@ type OnboardingItem = {
   image: any;
   isLast?: boolean;
 };
-
-const GREEN = '#57B300';
-const LIGHT_GREEN = '#EAF6D5';
-const TEXT_DARK = '#1E1E1E';
-const TEXT_GRAY = '#7A7A7A';
 
 const DATA: OnboardingItem[] = [
   {
@@ -64,6 +59,7 @@ const DATA: OnboardingItem[] = [
 ];
 
 export default function Onboarding() {
+  const theme = useTheme();
   const listRef = useRef<FlatList>(null);
   const [index, setIndex] = useState(0);
   const navigation = useNavigation<any>();
@@ -106,7 +102,8 @@ export default function Onboarding() {
   }, [isOnboarded, navigation]);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, {backgroundColor: theme.colors.background}]}>
       {/* Header */}
       <View style={styles.header}>
         {/* <Logo width={80} height={80} /> */}
@@ -128,7 +125,7 @@ export default function Onboarding() {
         onMomentumScrollEnd={onScrollEnd}
         renderItem={({item}) => (
           <View style={[styles.page, {width}]}>
-            <View style={{height: 100}} />
+            {/* <View style={{height: 100}} /> */}
 
             <View style={{gap: 30, alignItems: 'center'}}>
               {/* Illustration */}
@@ -138,14 +135,22 @@ export default function Onboarding() {
 
               {/* Title */}
               <View style={styles.textWrap}>
-                <Text style={styles.title}>{item.titleTop}</Text>
-                <Text style={styles.title}>{item.titleBottom}</Text>
+                <Text style={[styles.title, {color: theme.colors.surface}]}>
+                  {item.titleTop}
+                </Text>
+                <Text style={[styles.title, {color: theme.colors.surface}]}>
+                  {item.titleBottom}
+                </Text>
 
-                {!!item.desc && <Text style={styles.desc}>{item.desc}</Text>}
+                {!!item.desc && (
+                  <Text style={[styles.desc, {color: theme.colors.surface}]}>
+                    {item.desc}
+                  </Text>
+                )}
               </View>
             </View>
 
-            <View>
+            <View style={{width: '100%'}}>
               {/* Dots */}
               <View style={[styles.dotsRow, {justifyContent: 'center'}]}>
                 {DATA.map((_, i) => (
@@ -153,7 +158,9 @@ export default function Onboarding() {
                     key={i}
                     style={[
                       styles.dot,
-                      index === i ? styles.dotActive : styles.dotInactive,
+                      index === i
+                        ? {backgroundColor: theme.colors.primary}
+                        : {backgroundColor: theme.colors.secondary},
                     ]}
                   />
                 ))}
@@ -162,26 +169,52 @@ export default function Onboarding() {
               {/* Buttons Area */}
               {!item.isLast ? (
                 <View style={styles.bottomRow}>
-                  <TouchableOpacity style={styles.skipBtn} onPress={handleSkip}>
-                    <Text style={styles.skipText}>Skip</Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.skipBtn,
+                      {backgroundColor: theme.colors.secondary},
+                    ]}
+                    onPress={handleSkip}>
+                    <Text
+                      style={[styles.skipText, {color: theme.colors.primary}]}>
+                      Skip
+                    </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
+                  <TouchableOpacity
+                    style={[
+                      styles.nextBtn,
+                      {backgroundColor: theme.colors.primary},
+                    ]}
+                    onPress={handleNext}>
                     <Text style={styles.nextText}>Next</Text>
                   </TouchableOpacity>
                 </View>
               ) : (
                 <View style={styles.lastPageButtons}>
                   <TouchableOpacity
-                    style={styles.loginBtn}
+                    style={[
+                      styles.loginBtn,
+                      {backgroundColor: theme.colors.primary},
+                    ]}
                     onPress={() => handleLogin()}>
                     <Text style={styles.loginText}>Login with Email</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('SignUpScreen')}>
-                    <Text style={styles.signUpText}>
+                    <Text
+                      style={[
+                        styles.signUpText,
+                        {color: theme.colors.surface},
+                      ]}>
                       Don't have an account?{' '}
-                      <Text style={styles.underlineText}>Sign up</Text>
+                      <Text
+                        style={[
+                          styles.underlineText,
+                          {color: theme.colors.primary},
+                        ]}>
+                        Sign up
+                      </Text>
                     </Text>
                   </TouchableOpacity>
                   <Text style={styles.orText}>or</Text>
@@ -231,7 +264,6 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 22,
     fontWeight: '800',
-    color: TEXT_DARK,
   },
 
   logoImage: {
@@ -248,15 +280,13 @@ const styles = StyleSheet.create({
   },
 
   illustrationWrap: {
-    height: 260,
-    width: '100%',
+    height: 240,
+    width: 240,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
   },
   illustration: {
-    width: 350,
-    height: 350,
+    height: '120%',
     resizeMode: 'contain',
   },
 
@@ -266,16 +296,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 35,
+    fontSize: 33,
     fontWeight: '900',
-    color: TEXT_DARK,
     textAlign: 'center',
     lineHeight: 35,
   },
   desc: {
     marginTop: 10,
-    fontSize: 20,
-    color: TEXT_GRAY,
+    fontSize: 15,
     textAlign: 'center',
     // width: '86%',
     lineHeight: 25,
@@ -293,7 +321,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   dotActive: {
-    backgroundColor: GREEN,
     width: 18,
   },
   dotInactive: {
@@ -312,19 +339,16 @@ const styles = StyleSheet.create({
   },
 
   skipBtn: {
-    backgroundColor: LIGHT_GREEN,
     paddingVertical: 12,
     paddingHorizontal: 22,
     borderRadius: 12,
   },
   skipText: {
-    color: GREEN,
     fontWeight: '700',
   },
 
   nextBtn: {
     flex: 1,
-    backgroundColor: GREEN,
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
@@ -342,7 +366,6 @@ const styles = StyleSheet.create({
 
   loginBtn: {
     width: '100%',
-    backgroundColor: GREEN,
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -354,20 +377,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   signUpText: {
-    color: COLORS.darkGray,
-    // fontSize: 16,
-    // fontWeight: 'bold',
     textAlign: 'center',
   },
   underlineText: {
     textDecorationLine: 'underline',
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },
   orText: {
-    marginVertical: 10,
-    color: TEXT_GRAY,
+    marginVertical: 5,
     fontWeight: '600',
   },
 

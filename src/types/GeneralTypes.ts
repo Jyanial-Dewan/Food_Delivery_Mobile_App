@@ -7,7 +7,7 @@ export type ISignUpPayloadType = {
   username: string;
   user_type: string;
   email: string;
-  phone: string[];
+  phone: string;
   first_name: string;
   last_name: string;
   password: string;

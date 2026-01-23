@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import Container from '../common/components/Container';
 import {useForm} from 'react-hook-form';
 import {COLORS} from '../common/constant/Themes';
@@ -14,11 +8,10 @@ import CustomTextNew from '../common/components/CustomText';
 import CustomInputNew from '../common/components/CustomInput';
 import Row from '../common/components/Row';
 import CustomButtonNew from '../common/components/CustomButton';
-import {Checkbox} from 'react-native-paper';
+import {Checkbox, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../common/components/CustomToast';
 import {useIsFocused} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackScreensParms} from '../types/RootStactTypes';
 import {ILogInPayloadType} from '../types/GeneralTypes';
 import {httpRequest} from '../common/constant/httpRequest';
@@ -27,14 +20,19 @@ import {BaseURL} from '../../App';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
 import {setToken} from '../stores/Redux/Slices/UserSlice';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-type StackNavProps = StackNavigationProp<RootStackScreensParms, 'LoginScreen'>;
+type StackNavProps = NativeStackNavigationProp<
+  RootStackScreensParms,
+  'LoginScreen'
+>;
 
 interface LoginScreenProps {
   navigation: StackNavProps;
 }
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const [showPass, setShowPass] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,7 +86,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
       dispatch(setToken(res?.data));
       secureStorage.setItem('user_token', JSON.stringify(res?.data));
-      // navigation.replace('DrawerTabs');
+      navigation.replace('DrawerTabs');
     } else {
       toaster.show({message: res?.data?.message, type: 'warning'});
     }
@@ -99,8 +97,16 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
 
   return (
     <Container
-      isScrollView={false}
+      // isScrollView={false}
       style={styles.container}
+      header={
+        <View style={styles.header}>
+          <Image
+            source={require('../assets/Logo/logo1.png')}
+            style={styles.logoImage}
+          />
+        </View>
+      }
       footer={
         <View style={styles.footer}>
           <CustomButtonNew
@@ -108,20 +114,24 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             btnText="Sign in"
             isLoading={isLoading}
             onBtnPress={handleSubmit(onSubmit)}
-            btnstyle={styles.btn}
+            btnstyle={[styles.btn, {backgroundColor: theme.colors.primary}]}
             btnTextStyle={styles.btnTxt}
           />
           <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
-            <Text style={styles.signUpText}>
+            <Text style={[styles.signUpText, {color: theme.colors.surface}]}>
               Don't have an account?{' '}
-              <Text style={styles.underlineText}>Sign up</Text>
+              <Text
+                style={[styles.underlineText, {color: theme.colors.primary}]}>
+                Sign up
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
       }>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
       <View>
-        <Text style={styles.title}>Log into your account</Text>
+        <Text style={[styles.title, {color: theme.colors.surface}]}>
+          Log into your account
+        </Text>
       </View>
       <Column>
         <Column>
@@ -185,7 +195,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             align="center">
             <Checkbox.Item
               style={{marginVertical: 0, paddingHorizontal: 0}}
-              labelStyle={{color: COLORS.headerText, paddingLeft: 0}}
+              labelStyle={{color: theme.colors.surface, paddingLeft: 0}}
               label="Remember"
               status={checked ? 'checked' : 'unchecked'}
               onPress={() => {
@@ -196,7 +206,13 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             <Column>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgotPassword')}>
-                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                <Text
+                  style={[
+                    styles.forgotPassword,
+                    {color: theme.colors.primary},
+                  ]}>
+                  Forgot Password?
+                </Text>
               </TouchableOpacity>
             </Column>
           </Row>
@@ -210,20 +226,26 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
     padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoImage: {
+    width: 80,
+    // height: 80,
+    resizeMode: 'contain',
   },
   btn: {
     borderRadius: 10,
-    backgroundColor: COLORS.green,
   },
   btnTxt: {
-    color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
   forgotPassword: {
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -238,14 +260,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   signUpText: {
-    color: COLORS.darkGray,
-    // fontSize: 16,
-    // fontWeight: 'bold',
     textAlign: 'center',
   },
   underlineText: {
     textDecorationLine: 'underline',
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },

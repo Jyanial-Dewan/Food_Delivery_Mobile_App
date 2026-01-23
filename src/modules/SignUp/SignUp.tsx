@@ -1,12 +1,5 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import Container from '../../common/components/Container';
 import {useForm} from 'react-hook-form';
 import {COLORS} from '../../common/constant/Themes';
@@ -15,51 +8,54 @@ import CustomTextNew from '../../common/components/CustomText';
 import CustomInputNew from '../../common/components/CustomInput';
 import Row from '../../common/components/Row';
 import CustomButtonNew from '../../common/components/CustomButton';
-import {Checkbox} from 'react-native-paper';
+import {Checkbox, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../../common/components/CustomToast';
-import {useIsFocused} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackScreensParms} from '../../types/RootStactTypes';
 import {ISignUpPayloadType} from '../../types/GeneralTypes';
 import {httpRequest} from '../../common/constant/httpRequest';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
-import {secureStorage} from '../../utils/Storage/mmkv';
-import {useDispatch} from 'react-redux';
-import {setToken} from '../../stores/Redux/Slices/UserSlice';
+import PhoneInput from 'react-native-phone-number-input';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-type StackNavProps = StackNavigationProp<RootStackScreensParms, 'LoginScreen'>;
+type StackNavProps = NativeStackNavigationProp<
+  RootStackScreensParms,
+  'LoginScreen'
+>;
 
 interface SignUpScreenProps {
   navigation: StackNavProps;
 }
 
 const SignUp = ({navigation}: SignUpScreenProps) => {
-  const dispatch = useDispatch();
+  const theme = useTheme();
   const [showPass, setShowPass] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(true);
   const toaster = useToast();
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
+  // const [formattedValue, setFormattedValue] = useState('');
+  const phoneInput = useRef<PhoneInput>(null);
   const {control, handleSubmit, setValue, reset, getValues} = useForm({
     defaultValues: {
       username: '',
       user_type: '',
       email: '',
-      phone: [],
+      phone: '',
       first_name: '',
       last_name: '',
       password: '',
     },
   });
-
+  // console.log(formattedValue, 'formattedValue');
   const onSubmit = async (data: ISignUpPayloadType) => {
+    // console.log(data, 'data');
     const loginPayload = {
       username: data?.username?.trim(),
       user_type: data?.user_type?.trim(),
       email: data?.email?.trim(),
-      phone: data?.phone,
+      phone: [data?.phone],
       first_name: data?.first_name?.trim(),
       last_name: data?.last_name?.trim(),
       password: data?.password?.trim(),
@@ -74,19 +70,18 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
       // isConsoleParams: true,
     };
 
-    const res = await httpRequest({}, setIsLoading);
-    console.log(res, 'res');
-    if (res?.data?.access_token && res?.data?.isLoggedIn) {
-      dispatch(setToken(res?.data));
-      secureStorage.setItem('user_token', JSON.stringify(res?.data));
-      // navigation.replace('DrawerTabs');
+    const res = await httpRequest(api_params, setIsLoading);
+    // console.log(res, 'res');
+
+    // {"data": {"created_at": "2026-01-21T11:16:56.866Z", "email": "nepockma1@gmail.com", "first_name": "Nepo", "last_name": "Ckma", "phone": ["1517832317"], "user_id": 8, "user_type": "USER", "username": "nepockma11"}, "status": 201, "success": true}
+    if (res?.status === 201 && res?.success) {
+      toaster.show({message: 'User created successfully', type: 'success'});
+      reset();
+      navigation.replace('LoginScreen');
     } else {
-      toaster.show({message: res?.data?.message, type: 'warning'});
+      toaster.show({message: 'User created failed', type: 'warning'});
     }
   };
-  // const userToken = useSelector((state: RootState) => state.userToken);
-  // const u = secureStorage.getItem('user_token');
-  // console.log(u, 'user_token 22');
 
   return (
     <Container
@@ -95,7 +90,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
       header={
         <View style={styles.header}>
           <Image
-            source={require('../../assets/Logo/logo.png')}
+            source={require('../../assets/Logo/logo1.png')}
             style={styles.logoImage}
           />
         </View>
@@ -112,12 +107,14 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
           />
           <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
             <Text style={styles.signUpText}>
-              Have an account? <Text style={styles.underlineText}>Sign in</Text>
+              Have an account?{' '}
+              <Text style={[styles.underlineText, {color: COLORS.primary}]}>
+                Sign in
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
       }>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
       <View>
         <Text style={styles.title}>Create a new account</Text>
       </View>
@@ -127,7 +124,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             text="Username"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
           <CustomInputNew
             setValue={setValue}
@@ -139,12 +136,12 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             }}
           />
         </Column>
-        <Column>
+        <Column style={{marginTop: 10}}>
           <CustomTextNew
             text="User Type"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
           <CustomInputNew
             setValue={setValue}
@@ -156,12 +153,12 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             }}
           />
         </Column>
-        <Column>
+        <Column style={{marginTop: 10}}>
           <CustomTextNew
             text="Email"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
           <CustomInputNew
             setValue={setValue}
@@ -173,29 +170,50 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             }}
           />
         </Column>
-        <Column>
+        <Column style={{marginTop: 10}}>
           <CustomTextNew
             text="Phone Number"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
-          <CustomInputNew
-            setValue={setValue}
-            control={control}
-            name="phone"
-            label="Enter your phone number"
-            rules={{
-              required: 'Phone number is required',
+          <PhoneInput
+            ref={phoneInput}
+            defaultValue={getValues('phone')}
+            defaultCode="BD"
+            layout="first"
+            onChangeFormattedText={text => {
+              setValue('phone', text);
+              // setFormattedValue(text);
             }}
+            containerStyle={{
+              borderWidth: 1,
+              borderColor: COLORS.offDay,
+              height: 50,
+              width: '100%',
+              paddingHorizontal: 3,
+              borderRadius: 8,
+              backgroundColor: '#f9f9f9',
+            }}
+            textInputStyle={{
+              fontSize: 16,
+              height: 50,
+              fontWeight: '500',
+            }}
+            codeTextStyle={{
+              color: '#757775ff',
+            }}
+            // withDarkTheme
+            // withShadow
+            // autoFocus
           />
         </Column>
-        <Column>
+        <Column style={{marginTop: 10}}>
           <CustomTextNew
             text="First Name"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
           <CustomInputNew
             setValue={setValue}
@@ -207,12 +225,12 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             }}
           />
         </Column>
-        <Column>
+        <Column style={{marginTop: 10}}>
           <CustomTextNew
             text="Last Name"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
           <CustomInputNew
             setValue={setValue}
@@ -227,13 +245,13 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
 
         <Column
           colStyle={{
-            marginTop: 16,
+            marginTop: 10,
           }}>
           <CustomTextNew
             text="Password"
             txtSize={16}
             txtWeight={'500'}
-            padBottom={14}
+            padBottom={10}
           />
           <CustomInputNew
             setValue={setValue}
@@ -264,7 +282,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
             align="center">
             <Checkbox.Item
               style={{marginVertical: 0, paddingHorizontal: 0}}
-              labelStyle={{color: COLORS.headerText, paddingLeft: 0}}
+              labelStyle={{color: theme.colors.surface, paddingLeft: 0}}
               label="I agree to terms & conditions"
               status={checked ? 'checked' : 'unchecked'}
               onPress={() => {
@@ -283,7 +301,6 @@ export default SignUp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
     paddingBottom: 16,
     paddingHorizontal: 16,
   },
@@ -298,7 +315,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.headerText,
   },
   logoImage: {
     width: 80,
@@ -307,23 +323,19 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 10,
-    backgroundColor: COLORS.green,
   },
   btnTxt: {
-    color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
   forgotPassword: {
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },
   title: {
     marginBottom: 16,
-    fontSize: 35,
+    fontSize: 30,
     fontWeight: '900',
-    color: '#1E1E1E',
     textAlign: 'center',
     lineHeight: 35,
   },
@@ -332,14 +344,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   signUpText: {
-    // color: COLORS.green,
-    // fontSize: 16,
-    // fontWeight: 'bold',
     textAlign: 'center',
   },
   underlineText: {
     textDecorationLine: 'underline',
-    color: COLORS.green,
     fontSize: 16,
     fontWeight: 'bold',
   },

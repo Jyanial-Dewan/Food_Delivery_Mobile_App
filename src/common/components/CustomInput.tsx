@@ -4,6 +4,7 @@ import {Controller} from 'react-hook-form';
 import {Platform, StyleSheet, Text, TextInput, View} from 'react-native';
 import {COLORS, SIZES} from '../constant/Themes';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
+import {useTheme} from 'react-native-paper';
 
 interface ValidationRules {
   required?: boolean | string | {value: boolean; message: string};
@@ -61,6 +62,7 @@ const CustomInputNew = ({
   selectionColor,
   isImportant,
 }: Props) => {
+  const theme = useTheme();
   const handleChange = (e: string) => {
     if (onChange) {
       onChange(e);
@@ -79,13 +81,13 @@ const CustomInputNew = ({
             <View>
               <View style={[inputMainStyle]}>
                 <View style={styles.box}>
-                  {value ? (
+                  {/* {value ? (
                     <View>
                       <Text style={[styles.newLabelIOS, labelStyle]}>
                         {label}
                       </Text>
                     </View>
-                  ) : null}
+                  ) : null} */}
 
                   <View style={[styles.leftIcon]}>
                     <>{leftIcon ? leftIcon() : null}</>
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 999999,
     right: 10,
-    top: 10,
+    top: 15,
   },
   leftIcon: {
     paddingBottom: 8,

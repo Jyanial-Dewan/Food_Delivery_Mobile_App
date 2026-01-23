@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Image, Platform, StyleSheet, View} from 'react-native';
 import {COLORS, IMAGES, SIZES} from '../common/constant/Index';
 import BootSplash from 'react-native-bootsplash';
@@ -9,15 +9,18 @@ import {hydrateAuth} from '../stores/Redux/Hydrate/HydrateAuth';
 import {AppDispatch} from '../stores/Redux/Store/Store';
 import delay from '../common/services/delay';
 import {secureStorage} from '../utils/Storage/mmkv';
+import {useTheme} from 'react-native-paper';
 
 const Loader = ({navigation}: any) => {
+  const theme = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const isHydrated = useSelector(
     (state: RootState) => state.hydrate.isHydrated,
   );
   const userToken = useSelector((state: RootState) => state.userToken);
   const isOnboarded = secureStorage.getItem('isOnboarded');
-
+  const hasNavigated = useRef(false);
+  console.log(userToken, 'userToken');
   useEffect(() => {
     dispatch(hydrateAuth());
   }, [dispatch]);
@@ -36,20 +39,20 @@ const Loader = ({navigation}: any) => {
   }, [isHydrated]);
 
   useEffect(() => {
-    if (isHydrated) {
+    if (isHydrated && !hasNavigated.current) {
+      hasNavigated.current = true;
+
       delay(1000).then(() => {
         if (
           isOnboarded !== 'true' &&
           !userToken?.access_token &&
-          !userToken.isLoggedIn
+          !userToken?.isLoggedIn
         ) {
           navigation.replace('Onboarding');
+        } else if (userToken?.access_token && userToken?.isLoggedIn) {
+          navigation.replace('DrawerTabs');
         } else {
-          if (userToken?.access_token && userToken.isLoggedIn) {
-            navigation.replace('DrawerTabs');
-          } else {
-            navigation.replace('LoginScreen');
-          }
+          navigation.replace('LoginScreen');
         }
       });
     }
@@ -62,22 +65,29 @@ const Loader = ({navigation}: any) => {
   ]);
 
   return (
-    <View style={styles.center}>
-      <Image style={styles.logo} source={IMAGES.AppLogo} />
+    <View
+      style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      <View style={styles.center}>
+        <Image style={styles.logo} source={IMAGES.AppLogo} />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  center: {
+  container: {
     justifyContent: Platform.OS === 'ios' ? 'flex-start' : 'center',
     paddingTop: Platform.OS === 'ios' ? SIZES.height / 2.6 : 0.001,
     backgroundColor: COLORS.white,
     flex: 1,
   },
+  center: {
+    height: Platform.OS === 'ios' ? '30%' : '30%',
+    justifyContent: 'center',
+  },
   logo: {
-    // width: Platform.OS === 'ios' ? 90 : 100,
-    // height: Platform.OS === 'ios' ? 98 : 90,
+    width: '24%',
+    height: '54%',
     alignSelf: 'center',
   },
 });
