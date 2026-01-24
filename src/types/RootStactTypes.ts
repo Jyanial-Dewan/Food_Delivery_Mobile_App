@@ -8,4 +8,6 @@ export type RootStackScreensParms = {
   DrawerTabs: undefined;
   Onboarding: undefined;
   SignUpScreen: undefined;
+  OTPVerify: undefined;
+  CreateANewPassword: undefined;
 };

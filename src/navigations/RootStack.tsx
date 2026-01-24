@@ -8,7 +8,8 @@ import SignUp from '../modules/SignUp/SignUp';
 import Loader from '../auth/Loader';
 import {useTheme} from 'react-native-paper';
 import ForgotPassword from '../modules/ForgotPassword/ForgotPassword';
-
+import OTPVerify from '../modules/OTPVerify/OTPVerify';
+import CreateANewPassword from '../modules/CreateANewPassword/CreateANewPassword';
 const {Navigator, Screen} = createNativeStackNavigator<RootStackScreensParms>();
 const RootStack = () => {
   const theme = useTheme();
@@ -28,6 +29,8 @@ const RootStack = () => {
       <Screen name="LoginScreen" component={LoginScreen} />
       <Screen name="SignUpScreen" component={SignUp} />
       <Screen name="ForgotPassword" component={ForgotPassword} />
+      <Screen name="OTPVerify" component={OTPVerify} />
+      <Screen name="CreateANewPassword" component={CreateANewPassword} />
     </Navigator>
   );
 };

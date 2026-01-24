@@ -309,6 +309,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 10,
+  },
+  logoImage: {
+    resizeMode: 'center',
+    height: 20,
   },
   backButton: {
     padding: 8,
@@ -316,11 +321,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-  },
-  logoImage: {
-    width: 80,
-    // height: 80,
-    resizeMode: 'contain',
   },
   phoneContainer: {
     borderWidth: 1,

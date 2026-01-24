@@ -1,35 +1,28 @@
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import ContainerNew from '../../common/components/Container';
 import {useTheme} from 'react-native-paper';
+import {OtpInput} from 'react-native-otp-entry';
 import CustomButtonNew from '../../common/components/CustomButton';
 import {useState} from 'react';
-import {IForgotPasswordPayloadType} from '../../types/GeneralTypes';
-import {useForm} from 'react-hook-form';
-import Column from '../../common/components/Column';
-import CustomTextNew from '../../common/components/CustomText';
-import CustomInputNew from '../../common/components/CustomInput';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
+import {useForm} from 'react-hook-form';
 import {httpRequest} from '../../common/constant/httpRequest';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
-
-const ForgotPassword = () => {
+const OTPVerify = () => {
   const theme = useTheme();
   const navigation = useNavigation<any>();
   const [isLoading, setIsLoading] = useState(false);
-  const {control, handleSubmit, setValue, reset} =
-    useForm<IForgotPasswordPayloadType>({
-      defaultValues: {
-        email: '',
-      },
-    });
-
-  const onSubmit = async (data: IForgotPasswordPayloadType) => {
+  const {control, handleSubmit, setValue, reset} = useForm<{OTPcode: string}>({
+    defaultValues: {
+      OTPcode: '',
+    },
+  });
+  const onSubmit = async (data: {OTPcode: string}) => {
     const api_params = {
       url: api.AuthAppsLogin,
-      data: {email: data.email},
+      data: {OTPcode: data.OTPcode},
       method: 'post',
       baseURL: BaseURL,
       // isConsole: true,
@@ -39,7 +32,7 @@ const ForgotPassword = () => {
     console.log(res, 'res');
     navigation.reset({
       index: 0,
-      routes: [{name: 'OTPVerify'}],
+      routes: [{name: 'CreateANewPassword'}],
     });
     // if (res?.data?.access_token && res?.data?.isLoggedIn) {
     //   dispatch(setToken(res?.data));
@@ -49,24 +42,15 @@ const ForgotPassword = () => {
     //   toaster.show({message: res?.data?.message, type: 'warning'});
     // }
   };
-
-  const goBack = () => {
-    navigation.goBack();
-  };
-
   return (
     <ContainerNew
       style={[styles.container, {backgroundColor: theme.colors.background}]}
       header={
         <View style={styles.header}>
-          <TouchableOpacity onPress={goBack}>
-            <Icon name="arrow-left" size={24} color={theme.colors.primary} />
-          </TouchableOpacity>
           <Image
             source={require('../../assets/Logo/logo1.png')}
             style={styles.logoImage}
           />
-          <View></View>
         </View>
       }
       footer={
@@ -81,58 +65,66 @@ const ForgotPassword = () => {
           />
         </View>
       }>
-      <Column>
-        <Column>
-          <CustomTextNew
-            text="Forgot your password"
-            txtStyle={[
-              styles.title,
-              {
-                color: theme.colors.surface,
-              },
-            ]}
-          />
-          <CustomTextNew
-            text="Enter the verification code sent to your email sample@example.com"
-            txtStyle={[
-              styles.subTitle,
-              {
-                color: theme.colors.surface,
-              },
-            ]}
-          />
-          <CustomInputNew
-            setValue={setValue}
-            control={control}
-            name="email"
-            label="Enter your email"
-            rules={{
-              required: 'Email is required',
-              minLength: {
-                value: 3,
-                message: 'Email must be at least 3 characters long',
-              },
-            }}
-          />
-        </Column>
-      </Column>
+      <Text style={[styles.title, {color: theme.colors.onSurface}]}>
+        OTP Verify
+      </Text>
+      <OtpInput
+        numberOfDigits={6}
+        focusColor="green"
+        autoFocus={false}
+        hideStick={true}
+        placeholder="******"
+        blurOnFilled={true}
+        disabled={false}
+        type="numeric"
+        secureTextEntry={false}
+        focusStickBlinkingDuration={500}
+        onFocus={() => console.log('Focused')}
+        onBlur={() => console.log('Blurred')}
+        onTextChange={text => console.log(text)}
+        onFilled={text => console.log(`OTP is ${text}`)}
+        textInputProps={{
+          accessibilityLabel: 'One-Time Password',
+        }}
+        textProps={{
+          accessibilityRole: 'text',
+          accessibilityLabel: 'OTP digit',
+          allowFontScaling: false,
+        }}
+        theme={{
+          containerStyle: styles.container,
+          pinCodeContainerStyle: styles.pinCodeContainer,
+          // pinCodeTextStyle: styles.pinCodeText,
+          // focusStickStyle: styles.focusStick,
+          // focusedPinCodeContainerStyle: styles.activePinCodeContainer,
+          // placeholderTextStyle: styles.placeholderText,
+          // filledPinCodeContainerStyle: styles.filledPinCodeContainer,
+          // disabledPinCodeContainerStyle: styles.disabledPinCodeContainer,
+        }}
+      />
     </ContainerNew>
   );
 };
-export default ForgotPassword;
+export default OTPVerify;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingVertical: 10,
   },
   logoImage: {
     resizeMode: 'center',
     height: 20,
+  },
+  pinCodeContainer: {},
+  footer: {
+    padding: 8,
+    gap: 8,
   },
   btn: {
     borderRadius: 10,
@@ -151,9 +143,5 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 16,
     paddingVertical: 16,
-  },
-  footer: {
-    padding: 8,
-    gap: 8,
   },
 });
