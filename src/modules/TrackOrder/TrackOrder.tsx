@@ -8,7 +8,7 @@ const TrackOrder = () => {
   return (
     <ContainerNew
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
-      <Text style={styles.text}>TeactOrder</Text>
+      <Text style={styles.text}>Track Order</Text>
     </ContainerNew>
   );
 };

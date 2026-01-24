@@ -8,7 +8,7 @@ import CustomTextNew from '../common/components/CustomText';
 import CustomInputNew from '../common/components/CustomInput';
 import Row from '../common/components/Row';
 import CustomButtonNew from '../common/components/CustomButton';
-import {Checkbox, useTheme} from 'react-native-paper';
+import {Button, Checkbox, Dialog, Portal, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../common/components/CustomToast';
 import {useIsFocused} from '@react-navigation/native';
@@ -21,6 +21,9 @@ import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
 import {setToken} from '../stores/Redux/Slices/UserSlice';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+// import Alert from '../common/components/Alert';
+import {BackHandler} from 'react-native';
+import Alert from '../common/components/Alert';
 
 type StackNavProps = NativeStackNavigationProp<
   RootStackScreensParms,
@@ -91,9 +94,49 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
       toaster.show({message: res?.data?.message, type: 'warning'});
     }
   };
-  // const userToken = useSelector((state: RootState) => state.userToken);
-  // const u = secureStorage.getItem('user_token');
-  // console.log(u, 'user_token 22');
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const backAction = () => {
+      setVisible(true);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert(
+  //       'Exit App',
+  //       'Are you sure you want to exit?',
+  //       [
+  //         {
+  //           text: 'Cancel',
+  //           onPress: () => null,
+  //           style: 'cancel',
+  //         },
+  //         {
+  //           text: 'Exit',
+  //           onPress: () => BackHandler.exitApp(),
+  //         },
+  //       ],
+  //       {cancelable: false},
+  //     );
+  //     return true;
+  //   };
+
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+
+  //   return () => backHandler.remove();
+  // }, []);
 
   return (
     <Container
@@ -117,15 +160,18 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             btnstyle={[styles.btn, {backgroundColor: theme.colors.primary}]}
             btnTextStyle={styles.btnTxt}
           />
-          <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
+          <View style={styles.signUpContainer}>
             <Text style={[styles.signUpText, {color: theme.colors.surface}]}>
               Don't have an account?{' '}
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SignUpScreen')}>
               <Text
                 style={[styles.underlineText, {color: theme.colors.primary}]}>
                 Sign up
               </Text>
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         </View>
       }>
       <View>
@@ -218,6 +264,14 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           </Row>
         </Column>
       </Column>
+      <Alert
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        title={'Exit App'}
+        content={'Are you sure you want to exit?'}
+        cancel={() => setVisible(false)}
+        ok={() => BackHandler.exitApp()}
+      />
     </Container>
   );
 };
@@ -232,11 +286,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 10,
   },
   logoImage: {
-    width: 80,
-    // height: 80,
-    resizeMode: 'contain',
+    resizeMode: 'center',
+    height: 20,
   },
   btn: {
     borderRadius: 10,
@@ -244,6 +298,7 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   forgotPassword: {
     fontSize: 16,
@@ -258,6 +313,11 @@ const styles = StyleSheet.create({
   footer: {
     padding: 8,
     gap: 8,
+  },
+  signUpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signUpText: {
     textAlign: 'center',

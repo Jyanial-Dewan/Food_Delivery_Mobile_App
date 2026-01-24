@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
-import {Image, Platform, StyleSheet, View} from 'react-native';
-import {COLORS, IMAGES, SIZES} from '../common/constant/Index';
+import {Image, StyleSheet, View} from 'react-native';
+import {IMAGES} from '../common/constant/Index';
 import BootSplash from 'react-native-bootsplash';
 import {useDispatch} from 'react-redux';
 import {useSelector} from 'react-redux';
@@ -67,28 +67,19 @@ const Loader = ({navigation}: any) => {
   return (
     <View
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
-      <View style={styles.center}>
-        <Image style={styles.logo} source={IMAGES.AppLogo} />
-      </View>
+      <Image style={styles.logo} source={IMAGES.AppLogo} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: Platform.OS === 'ios' ? 'flex-start' : 'center',
-    paddingTop: Platform.OS === 'ios' ? SIZES.height / 2.6 : 0.001,
-    backgroundColor: COLORS.white,
     flex: 1,
-  },
-  center: {
-    height: Platform.OS === 'ios' ? '30%' : '30%',
     justifyContent: 'center',
   },
   logo: {
-    width: '24%',
-    height: '54%',
     alignSelf: 'center',
+    resizeMode: 'center',
   },
 });
 
