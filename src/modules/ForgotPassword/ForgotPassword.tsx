@@ -107,6 +107,10 @@ const ForgotPassword = () => {
             name="email"
             label="Enter your email"
             rules={{
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Please enter a valid email address',
+              },
               required: 'Email is required',
               minLength: {
                 value: 3,

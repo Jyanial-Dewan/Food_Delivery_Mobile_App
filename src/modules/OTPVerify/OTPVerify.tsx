@@ -1,5 +1,5 @@
-import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {BackHandler, Image, StyleSheet, Text, View} from 'react-native';
 import ContainerNew from '../../common/components/Container';
 import {useTheme} from 'react-native-paper';
 import {OtpInput} from 'react-native-otp-entry';
@@ -10,6 +10,7 @@ import {BaseURL} from '../../../App';
 import {useForm} from 'react-hook-form';
 import {httpRequest} from '../../common/constant/httpRequest';
 import {useNavigation} from '@react-navigation/native';
+import Alert from '../../common/components/Alert';
 const OTPVerify = () => {
   const theme = useTheme();
   const navigation = useNavigation<any>();
@@ -42,6 +43,22 @@ const OTPVerify = () => {
     //   toaster.show({message: res?.data?.message, type: 'warning'});
     // }
   };
+
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const backAction = () => {
+      setVisible(true);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <ContainerNew
       style={[styles.container, {backgroundColor: theme.colors.background}]}
@@ -101,6 +118,14 @@ const OTPVerify = () => {
           // filledPinCodeContainerStyle: styles.filledPinCodeContainer,
           // disabledPinCodeContainerStyle: styles.disabledPinCodeContainer,
         }}
+      />
+      <Alert
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        title={'Exit App'}
+        content={'Are you sure you want to exit?'}
+        cancel={() => setVisible(false)}
+        ok={() => BackHandler.exitApp()}
       />
     </ContainerNew>
   );
