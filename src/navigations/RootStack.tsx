@@ -7,6 +7,7 @@ import Onboarding from '../modules/Onboarding/Onboarding';
 import SignUp from '../modules/SignUp/SignUp';
 import Loader from '../auth/Loader';
 import {useTheme} from 'react-native-paper';
+import ForgotPassword from '../modules/ForgotPassword/ForgotPassword';
 
 const {Navigator, Screen} = createNativeStackNavigator<RootStackScreensParms>();
 const RootStack = () => {
@@ -26,6 +27,7 @@ const RootStack = () => {
       <Screen name="DrawerTabs" component={DrawerTabs} />
       <Screen name="LoginScreen" component={LoginScreen} />
       <Screen name="SignUpScreen" component={SignUp} />
+      <Screen name="ForgotPassword" component={ForgotPassword} />
     </Navigator>
   );
 };

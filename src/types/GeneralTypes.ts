@@ -12,3 +12,6 @@ export type ISignUpPayloadType = {
   last_name: string;
   password: string;
 };
+export type IForgotPasswordPayloadType = {
+  email: string;
+};
