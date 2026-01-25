@@ -1,4 +1,8 @@
 export type DrawerTabsScreensParms = {
-  BottomTabs: undefined;
-  Profile: undefined;
+  MyAccount: undefined;
+  MyOrders: undefined;
+  Payment: undefined;
+  Address: undefined;
+  Subscription: undefined;
+  Settings: undefined;
 };
