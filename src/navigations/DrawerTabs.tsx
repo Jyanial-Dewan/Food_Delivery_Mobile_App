@@ -5,14 +5,19 @@ import {
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import BottomTabs from './BottomTabs';
-import Profile from '../modules/Profile/Profile';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
 import {clearToken} from '../stores/Redux/Slices/UserSlice';
-import {useTheme} from 'react-native-paper';
+import {Avatar, Switch, useTheme} from 'react-native-paper';
 import {setTheme} from '../stores/Redux/Slices/ThemeSlice';
+import MyAccount from '../modules/MyAccount/MyAccount';
+import MyOrders from '../modules/MyOrders/MyOrders';
+import Settings from '../modules/Settings/Settings';
+import Subscription from '../modules/Subscription/Subscription';
+import Address from '../modules/Address/Address';
+import Payment from '../modules/Payment/Payment';
 
 const {Navigator, Screen} = createDrawerNavigator();
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
@@ -36,20 +41,35 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
   const links = [
     {
-      name: 'Home',
-      icon: 'home',
-      screen: 'BottomTabs',
+      name: 'My Account',
+      icon: 'account',
+      screen: 'MyAccount',
     },
     {
-      name: 'Profile',
-      icon: 'person',
-      screen: 'Profile',
+      name: 'My Orders',
+      icon: 'cart',
+      screen: 'MyOrders',
     },
-    // {
-    //   name: 'Settings',
-    //   icon: 'settings',
-    //   screen: 'Settings',
-    // },
+    {
+      name: 'Payment',
+      icon: 'cash',
+      screen: 'Payment',
+    },
+    {
+      name: 'Address',
+      icon: 'map',
+      screen: 'Address',
+    },
+    {
+      name: 'Subscription',
+      icon: 'auto-fix',
+      screen: 'Subscription',
+    },
+    {
+      name: 'Settings',
+      icon: 'tools',
+      screen: 'Settings',
+    },
     {
       name: 'Log Out',
       icon: 'logout',
@@ -63,37 +83,100 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   };
   return (
     <DrawerContentScrollView {...props}>
-      <View style={styles.mode}>
+      <View style={{gap: 10}}>
+        <View style={styles.header}>
+          <Avatar.Image
+            style={[styles.avatar, {backgroundColor: theme.colors.secondary}]}
+            size={70}
+            source={require('../assets/Profile/profile.png')}
+          />
+          <View style={{gap: 3}}>
+            <Text style={[styles.headerText, {color: theme.colors.surface}]}>
+              Danial Jones
+            </Text>
+            <Text style={[styles.headerSubText, {color: theme.colors.surface}]}>
+              danial.jones@gmail.com
+            </Text>
+            <View style={styles.premiumBadge}>
+              <MaterialCommunityIcon name="star" size={14} color={'orange'} />
+              <Text
+                style={[styles.headerSubText, {color: theme.colors.surface}]}>
+                Premium
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* <View style={styles.mode}>
         <TouchableOpacity onPress={handleThemeChange}>
-          <Icon
-            name={theme.dark ? 'dark-mode' : 'light-mode'}
+          <MaterialCommunityIcon
+            name={theme.dark ? 'white-balance-sunny' : 'weather-night'}
             size={22}
-            color={theme.dark ? 'white' : 'green'}
+            color={theme.dark ? 'orange' : 'black'}
           />
         </TouchableOpacity>
+      </View> */}
+        <Text style={[styles.text, {color: theme.colors.surface}]}>
+          General
+        </Text>
+        <View style={{}}>
+          {links.map((link, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() =>
+                link.screen === 'LogOut'
+                  ? handleLogOut()
+                  : props.navigation.navigate(link.screen)
+              }
+              style={[
+                styles.link,
+                isActive(link.screen) && {
+                  backgroundColor: theme.colors.primary,
+                },
+                {backgroundColor: theme.colors.secondary},
+              ]}>
+              <View style={styles.linkContent}>
+                <MaterialCommunityIcon
+                  name={link.icon}
+                  size={22}
+                  color={theme.colors.surface}
+                />
+                <Text
+                  style={[
+                    styles.text,
+                    isActive(link.screen) && styles.activeText,
+                    {color: theme.colors.surface},
+                  ]}>
+                  {link.name}
+                </Text>
+              </View>
+              {index !== links.length - 1 && (
+                <MaterialCommunityIcon
+                  name="chevron-right"
+                  size={22}
+                  color={theme.colors.surface}
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+        <Text style={[styles.text, {color: theme.colors.surface}]}>Theme</Text>
+        <View style={{gap: 10}}>
+          <View
+            style={[styles.link, {backgroundColor: theme.colors.secondary}]}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+              <MaterialCommunityIcon
+                name={theme.dark ? 'white-balance-sunny' : 'weather-night'}
+                size={22}
+                color={theme.dark ? 'black' : 'orange'}
+              />
+              <Text style={[styles.text, {color: theme.colors.surface}]}>
+                {theme.dark ? 'Dark Mode' : 'Light Mode'}
+              </Text>
+            </View>
+            <Switch value={theme.dark} onValueChange={handleThemeChange} />
+          </View>
+        </View>
       </View>
-      {links.map((link, index) => (
-        <TouchableOpacity
-          key={index}
-          onPress={() =>
-            link.screen === 'LogOut'
-              ? handleLogOut()
-              : props.navigation.navigate(link.screen)
-          }
-          style={[
-            styles.link,
-            isActive(link.screen) && {backgroundColor: theme.colors.primary},
-          ]}>
-          <Text
-            style={[
-              styles.text,
-              isActive(link.screen) && styles.activeText,
-              {color: theme.colors.surface},
-            ]}>
-            {link.name}
-          </Text>
-        </TouchableOpacity>
-      ))}
     </DrawerContentScrollView>
   );
 };
@@ -130,8 +213,48 @@ const DrawerTabs = () => {
         }}
       />
       <Screen
-        name="Profile"
-        component={Profile}
+        name="MyAccount"
+        component={MyAccount}
+        options={{
+          headerShown: false,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Screen
+        name="MyOrders"
+        component={MyOrders}
+        options={{
+          headerShown: false,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Screen
+        name="Payment"
+        component={Payment}
+        options={{
+          headerShown: false,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Screen
+        name="Address"
+        component={Address}
+        options={{
+          headerShown: false,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Screen
+        name="Subscription"
+        component={Subscription}
+        options={{
+          headerShown: false,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Screen
+        name="Settings"
+        component={Settings}
         options={{
           headerShown: false,
           drawerItemStyle: {display: 'none'},
@@ -143,12 +266,49 @@ const DrawerTabs = () => {
 
 export default DrawerTabs;
 const styles = StyleSheet.create({
+  header: {
+    // padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    // justifyContent: 'space-between',
+  },
+  avatar: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 50,
+  },
+  premiumBadge: {
+    gap: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    width: '60%',
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  headerSubText: {
+    fontSize: 14,
+  },
   mode: {flexDirection: 'row', justifyContent: 'flex-end', padding: 5},
   link: {
-    // backgroundColor: '#f0f0f0',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 12,
     borderRadius: 6,
-    // marginVertical: 4,
+    marginVertical: 4,
+  },
+  linkContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   activeLink: {
     backgroundColor: '#ccf4ceff', // Green background for active item

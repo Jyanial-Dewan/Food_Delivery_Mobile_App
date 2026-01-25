@@ -64,8 +64,8 @@ const customLightTheme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    background: COLORS.white, //background
-    onBackground: COLORS.darkThemeOnBackground,
+    background: COLORS.lightThemeBackground, //background
+    onBackground: COLORS.lightThemeOnBackground,
     primary: COLORS.primary, //primary color green
     surface: COLORS.titleLightSecondary, //text color
     secondary: COLORS.secondaryLightButton, //secondaryLightButton
