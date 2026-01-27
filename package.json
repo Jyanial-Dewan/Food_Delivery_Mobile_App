@@ -15,6 +15,8 @@
     "@react-navigation/native": "^7.1.26",
     "@react-navigation/native-stack": "6.9.18",
     "@react-navigation/stack": "7.4.8",
+    "fs": "^0.0.1-security",
+    "multer": "^2.0.2",
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-gesture-handler": "2.18.0",
