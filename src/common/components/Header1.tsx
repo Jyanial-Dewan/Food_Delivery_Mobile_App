@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 
 interface IHeader1Props {
   title: string;
+  leftFuncPress?: () => void;
   rightFuncTitle?: string;
   rightFuncIcon?: string;
   rightFuncPress?: () => void;
@@ -16,12 +17,15 @@ const Header1 = ({
   rightFuncTitle,
   rightFuncIcon,
   rightFuncPress,
+  leftFuncPress,
 }: IHeader1Props) => {
   const theme = useTheme();
   const navigation = useNavigation<any>();
   const goBack = () => {
+    leftFuncPress && leftFuncPress();
     navigation.goBack();
   };
+
   return (
     <View
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
