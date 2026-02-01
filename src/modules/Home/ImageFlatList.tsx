@@ -1,19 +1,19 @@
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import chineseImage from '../../assets/Images/chinese.jpg';
-import pizzaImage from '../../assets/Images/pizza.jpg';
-import biriyaniImage from '../../assets/Images/biriyani.jpg';
-import bangladeshImage from '../../assets/Images/bangladeshi.jpg';
-import bakeryImage from '../../assets/Images/Bakery.jpg';
-import burgerImage from '../../assets/Images/Burger.jpg';
-import chickenImage from '../../assets/Images/Chicken.jpg';
-import coffeImage from '../../assets/Images/Coffe.jpg';
-import fastFoodImage from '../../assets/Images/Fast_Food.jpg';
-import pastaImage from '../../assets/Images/Pasta.jpg';
-import kebabImage from '../../assets/Images/Kebabs.jpg';
-import riceDishesImage from '../../assets/Images/Rice_Dishes.jpg';
-import shwarmaImage from '../../assets/Images/Shawrma.jpg';
-import snackImage from '../../assets/Images/Snacks.jpg';
+import chineseImage from '../../assets/Images/Chinese1.jpg';
+import pizzaImage from '../../assets/Images/Pizza1.jpg';
+import biriyaniImage from '../../assets/Images/Biriyani1.jpg';
+import bangladeshImage from '../../assets/Images/Bangladeshi_food1.jpg';
+import bakeryImage from '../../assets/Images/Bakery1.jpg';
+import burgerImage from '../../assets/Images/Burger1.jpeg';
+import chickenImage from '../../assets/Images/Chicken_Curry1.jpg';
+import coffeImage from '../../assets/Images/Coffee1.jpg';
+import fastFoodImage from '../../assets/Images/Fast_food1.jpg';
+import pastaImage from '../../assets/Images/Pasta1.jpg';
+import kebabImage from '../../assets/Images/Kebab1.jpg';
+import riceDishesImage from '../../assets/Images/Rice_Dishes1.jpg';
+import shwarmaImage from '../../assets/Images/Shawrma1.jpg';
+import snackImage from '../../assets/Images/Snacks1.jpg';
 
 const images = [
   {id: '1', src: chineseImage, name: 'Chinese'},

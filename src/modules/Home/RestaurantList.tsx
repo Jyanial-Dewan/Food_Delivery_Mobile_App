@@ -32,7 +32,13 @@ const RestaurantList = () => {
         data={restaurants}
         keyExtractor={item => String(item.user_id)}
         renderItem={({item}) => (
-          <View style={{marginBottom: 20}}>
+          <View
+            style={{
+              marginBottom: 20,
+              flex: 1,
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+            }}>
             <Image
               source={{uri: `${BaseURL}/${item.profile_image_thumbnail}`}}
               style={styles.imageStyle}
