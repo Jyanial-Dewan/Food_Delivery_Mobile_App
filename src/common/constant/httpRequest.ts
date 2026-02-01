@@ -1,289 +1,246 @@
-// httpRequest.ts
+// httpRequest.ts (ENTERPRISE VERSION)
 import axios, {
-  AxiosResponse,
+  AxiosInstance,
   AxiosRequestConfig,
+  AxiosResponse,
   AxiosHeaders,
   AxiosError,
 } from 'axios';
 import {makeEncryption, makeDecryption} from './encryption';
 import {withoutEncryptionApi} from '../apis/withoutEncrytApi';
 
-interface RequestParams {
+/* ============================================================
+  TYPES
+============================================================ */
+export type httpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+export interface RequestParams {
   url: string;
+  method?: httpMethod;
   data?: any;
-  method?: string;
-  baseURL?: string;
-  isConsole?: boolean;
+
+  // Auth / headers
+  access_token?: string | null;
+  referer?: string;
+
+  // File
   mediaFile?: any;
   fileKey?: string;
   isParamsAndmediaFile?: boolean;
+
+  // Params
   isEncrypted?: boolean;
-  isPostOrPutWithParams?: boolean;
-  isBaseURLAndURLSame?: boolean;
+
+  // Debug
+  isConsole?: boolean;
   isConsoleParams?: boolean;
-  referer?: string;
-  access_token?: string | null;
+
+  // Base
+  baseURL?: string;
+  isBaseURLAndURLSame?: boolean;
 }
 
 type LoadingCallback = (state: boolean) => void;
 
-// ===============================================================
-// 🧱 AXIOS INSTANCE
-// ===============================================================
-const axiosInstance = axios.create({
+/* ============================================================
+  AXIOS INSTANCE
+============================================================ */
+const axiosInstance: AxiosInstance = axios.create({
+  // baseURL: 'http://10.0.2.2:3000',
   timeout: 20000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
-// ===============================================================
-// 🔐 REQUEST INTERCEPTOR
-// ===============================================================
+/* ============================================================
+  HELPERS
+============================================================ */
+
+const ensureHeaders = (config: AxiosRequestConfig): AxiosHeaders => {
+  if (config.headers instanceof AxiosHeaders) {
+    return config.headers;
+  }
+
+  const headers = new AxiosHeaders();
+
+  if (config.headers && typeof config.headers === 'object') {
+    Object.entries(config.headers).forEach(([key, value]) => {
+      if (value !== undefined) {
+        headers.set(key, value as any);
+      }
+    });
+  }
+
+  return headers;
+};
+
+/* ============================================================
+  REQUEST INTERCEPTOR
+============================================================ */
 axiosInstance.interceptors.request.use(
   async config => {
-    let url = config?.url;
-    if (!url) {
+    const url = config.url ?? '';
+
+    const isSkipEncryption = withoutEncryptionApi.some(api =>
+      url.includes(api),
+    );
+
+    // ✅ Detect RN FormData FIRST
+    const isFormData =
+      typeof config.data === 'object' &&
+      config.data !== null &&
+      (config.data as any)._parts !== undefined;
+
+    // ================= FILE UPLOAD =================
+    if (isFormData) {
+      const headers = ensureHeaders(config);
+      headers.set('Content-Type', 'multipart/form-data');
+      config.headers = headers;
+
+      // ❌ skip encryption, BUT NOT multipart setup
       return config;
     }
 
-    // Skip encryption for specific endpoints
-    if (withoutEncryptionApi.some(endpoint => url.includes(endpoint))) {
-      return config;
-    }
+    // ================= JSON BODY =================
+    if (!isSkipEncryption && config.data) {
+      const encrypted = await makeEncryption(JSON.stringify(config.data));
 
-    let copyOfConfig = {...config};
+      if (encrypted) {
+        config.data = encrypted;
 
-    // 🔒 Encrypt query parameters if exist
-    // if (url.includes('?')) {
-    //   const [base, query] = url.split('?');
-    //   const encryptedQuery = await makeEncryption(query);
-    //   if (encryptedQuery) {
-    //     copyOfConfig.url = `${base}?${encryptedQuery}`;
-    //   }
-    // }
-    // 🔒 Encrypt query parameters if exist
-    // NOTE: Do not auto-encrypt query strings here.
-    // Query encryption is handled in apiParamsProcess() when params.isEncrypted is set.
-
-    // 🔒 Encrypt payload (body)
-    if (config.data) {
-      const encryptedPayload = await makeEncryption(
-        JSON.stringify(config.data),
-      );
-      if (encryptedPayload) {
-        copyOfConfig.data = encryptedPayload;
-        const headers =
-          config.headers instanceof AxiosHeaders
-            ? config.headers
-            : AxiosHeaders.from(config.headers || {});
+        const headers = ensureHeaders(config);
         headers.set('Content-Type', 'application/json');
-        copyOfConfig.headers = headers;
+        config.headers = headers;
       }
     }
 
-    return copyOfConfig;
+    return config;
   },
   error => Promise.reject(error),
 );
 
-// ===============================================================
-// 🧩 RESPONSE INTERCEPTOR
-// ===============================================================
+/* ============================================================
+  RESPONSE INTERCEPTOR
+============================================================ */
 axiosInstance.interceptors.response.use(
-  async response => {
-    const url = response?.config?.url || '';
-    if (withoutEncryptionApi.some(endpoint => url.includes(endpoint))) {
+  response => {
+    const url = response.config.url ?? '';
+
+    if (withoutEncryptionApi.some(api => url.includes(api))) {
+      return response;
+    }
+
+    if (typeof response.data !== 'string') {
       return response;
     }
 
     try {
-      const decrypted = makeDecryption(response?.data);
-      if (decrypted) {
-        return {...response, data: decrypted};
-      }
-      return response;
-    } catch (error) {
-      console.error('Decryption error:', error);
+      const decrypted = makeDecryption(response.data);
+      return decrypted ? {...response, data: decrypted} : response;
+    } catch {
       return response;
     }
   },
   error => Promise.reject(error),
 );
 
-// ===============================================================
-// 🚀 UNIVERSAL HTTP REQUEST FUNCTION
-// ===============================================================
+/* ============================================================
+  MAIN HTTP REQUEST
+============================================================ */
 export const httpRequest = async (
   params: RequestParams,
   cb?: LoadingCallback,
 ) => {
-  const configParams = configuration(params);
-  const defaultBaseURL = axiosInstance.defaults.baseURL || '';
+  const method = params.method ?? 'GET';
 
   let config: AxiosRequestConfig = {
-    method: configParams.method || 'GET',
+    method,
     baseURL: params.isBaseURLAndURLSame
       ? params.url
-      : params.baseURL || defaultBaseURL,
+      : params.baseURL ?? axiosInstance.defaults.baseURL,
     headers: {
-      Authorization: params.access_token ? `Bearer ${params.access_token}` : '',
-      'Content-Type': params.mediaFile
-        ? 'multipart/form-data'
-        : 'application/json',
-      Referer: params.referer || '',
+      Authorization: params.access_token
+        ? `Bearer ${params.access_token}`
+        : undefined,
+      Referer: params.referer,
     },
   };
 
-  // =========================================================
-  // 🧩 Handle Data or Media File
-  // =========================================================
-  if (params.data || params.mediaFile) {
-    const method = (configParams.method || 'GET').toUpperCase();
+  /* ================= FILE UPLOAD ================= */
+  if (params.mediaFile) {
+    const formData = new FormData();
 
+    formData.append((params.fileKey ?? 'file').trim(), {
+      uri: params.mediaFile.uri,
+      name: params.mediaFile.fileName || params.mediaFile.name || 'upload.jpg',
+      type: params.mediaFile.type || 'image/jpeg',
+    } as any);
+
+    // file + params
+    if (params.isParamsAndmediaFile && params.data) {
+      Object.keys(params.data).forEach(key => {
+        formData.append(key, String(params.data[key]));
+      });
+    }
+
+    config.url = params.url;
+    config.data = formData;
+  } else if (params.data) {
+    /* ================= NORMAL DATA ================= */
     if (method === 'GET') {
-      config = await apiParamsProcess(params, config);
+      config = await processGetParams(params, config);
     } else {
-      let formData = new FormData();
-
-      if (params.mediaFile) {
-        const file = {
-          uri: params.mediaFile?.uri,
-          name: params.mediaFile?.fileName || params.mediaFile?.name,
-          type: params.mediaFile?.type,
-        };
-        formData.append(params?.fileKey ?? 'file', file);
-      }
-
-      if (params.mediaFile && params.isParamsAndmediaFile) {
-        config.url = configParams.url;
-        config.params = configParams.data;
-        config.data = formData;
-      } else if (params.isPostOrPutWithParams) {
-        config = await apiParamsProcess(params, config);
-      } else if (params.mediaFile) {
-        config.url = configParams.url;
-        config.data = formData;
-      } else {
-        config.url = configParams.url;
-        config.data = configParams.data;
-      }
+      config.url = params.url;
+      config.data = params.data;
     }
   } else {
     config.url = params.url;
   }
 
-  // =========================================================
-  // 📡 API Execution
-  // =========================================================
+  /* ================= EXECUTE ================= */
   try {
     cb?.(true);
+
     if (params.isConsoleParams) {
-      console.log('🔍 API Config =>', JSON.stringify(config, null, 2));
+      console.log('🔍 API CONFIG:', config);
     }
 
     const response: AxiosResponse = await axiosInstance(config);
 
     cb?.(false);
+
     if (params.isConsole) {
-      console.log('✅ API Response =>', JSON.stringify(response.data, null, 2));
+      console.log('✅ API RESPONSE:', response.data);
     }
 
     return {
+      success: true,
       status: response.status,
-      success: response.status >= 200 && response.status < 300,
       data: response.data,
     };
-  } catch (error: any) {
+  } catch (error) {
+    console.log(error, 'error');
     cb?.(false);
     const err = error as AxiosError;
 
-    if (params.isConsole) {
-      console.error(
-        '❌ API Error =>',
-        JSON.stringify(err.response?.data, null, 2),
-      );
-    }
-
     return {
-      status: err.response?.status || 500,
       success: false,
-      data: err.response?.data || err.message,
+      status: err.response?.status ?? 500,
+      data: err.response?.data ?? err.message ?? 'Network Error',
     };
   }
 };
 
-// ===============================================================
-// 🧮 Helper: Handle GET Params
-// ===============================================================
-const apiParamsProcess = async (params: any, config: any) => {
-  const configParams = configuration(params);
-  const queryString = new URLSearchParams(configParams.data).toString();
-  let processedConfig = {};
+/* ============================================================
+  GET PARAM HANDLER
+============================================================ */
+const processGetParams = async (
+  params: RequestParams,
+  config: AxiosRequestConfig,
+) => {
+  const query = new URLSearchParams(params.data).toString();
 
-  if (
-    withoutEncryptionApi.some(endpoint => configParams.url.includes(endpoint))
-  ) {
-    processedConfig = {
-      url: configParams.url,
-      params: configParams.data,
-      ...config,
-    };
-  } else {
-    if (params.isEncrypted) {
-      const encrypted = await makeEncryption(queryString);
-      console.log(`🔐 Encrypted Params for ${configParams.url}?${encrypted}`);
-      processedConfig = {
-        url: `${configParams.url}?${encrypted}`,
-        ...config,
-      };
-    } else {
-      processedConfig = {
-        url: `${configParams.url}?${queryString}`,
-        ...config,
-      };
-    }
+  if (params.isEncrypted) {
+    const encrypted = await makeEncryption(query);
+    return {...config, url: `${params.url}?${encrypted}`};
   }
 
-  return processedConfig;
+  return {...config, url: `${params.url}?${query}`};
 };
-
-// ===============================================================
-// ⚙️ Helper: Configuration
-// ===============================================================
-const configuration = (param: any) => {
-  if (param.url && (param.data || param.mediaFile) && param.method) {
-    return {
-      url: param.url,
-      data: param.data,
-      method: param.method,
-    };
-  } else {
-    return {
-      url: param.url,
-      method: param.method || 'GET',
-    };
-  }
-};
-
-// export const buildUrlWithQuery = (
-//   url: string,
-//   query?: Record<string, any>,
-// ): string => {
-//   if (!query || Object.keys(query).length === 0) return url;
-//   const [base, existing] = url.split('?');
-//   const search = new URLSearchParams(existing || '');
-//   for (const [key, value] of Object.entries(query)) {
-//     if (value === undefined || value === null) continue;
-//     if (Array.isArray(value)) {
-//       search.delete(key);
-//       for (const item of value) {
-//         search.append(key, String(item));
-//       }
-//     } else {
-//       search.set(key, String(value));
-//     }
-//   }
-//   const qs = search.toString();
-//   return qs ? `${base}?${qs}` : base;
-// };

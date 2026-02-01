@@ -85,7 +85,6 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     secureStorage.setItem('theme', theme.dark ? 'light' : 'dark');
   };
 
-  console.log(`${BaseURL}/${user?.profileImage}`);
   return (
     <DrawerContentScrollView {...props}>
       <View style={{gap: 10}}>

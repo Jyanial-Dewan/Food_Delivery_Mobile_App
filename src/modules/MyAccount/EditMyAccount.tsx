@@ -20,17 +20,19 @@ import CustomInputNew from '../../common/components/CustomInput';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import CustomButtonNew from '../../common/components/CustomButton';
-import {httpRequest} from '../../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import {BaseURL} from '../../../App';
 import {api} from '../../common/apis/api';
 import {useToast} from '../../common/components/CustomToast';
-import axios from 'axios';
+import {updateUser} from '../../stores/Redux/Slices/UserSlice';
+import {useDispatch} from 'react-redux';
 
 const EditMyAccount = ({navigation}: any) => {
   const theme = useTheme();
   const user = useSelector((state: any) => state.user.user);
+  const dispatch = useDispatch();
   const [editAccount, setEditAccount] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,6 +70,7 @@ const EditMyAccount = ({navigation}: any) => {
     setProfilePhoto({
       uri: user?.profile_image_thumbnail,
       name: '',
+      type: '',
     });
     reset();
   };
@@ -139,22 +142,25 @@ const EditMyAccount = ({navigation}: any) => {
     }
   };
 
-  const {control, handleSubmit, setValue, reset, getValues} = useForm({
-    defaultValues: {
-      first_name: user?.first_name || '',
-      last_name: user?.last_name || '',
-      phone: user?.phone?.[0] || '',
-      email: user?.email || '',
-      address: user?.address || '',
-    },
-  });
-  console.log(user, 'user');
+  const {control, handleSubmit, setValue, reset, getValues, formState} =
+    useForm({
+      defaultValues: {
+        first_name: user?.first_name || '',
+        last_name: user?.last_name || '',
+        phone: user?.phone?.[0] || '',
+        email: user?.email || '',
+        address: user?.address || '',
+      },
+    });
+  const {dirtyFields} = formState;
+  const isFormDirty = Object.keys(dirtyFields).length > 0;
+  console.log(isFormDirty);
   const onSubmit = async (data: any) => {
     console.log(data);
     if (!user?.user_id) return;
 
     const api_params = {
-      url: `${api.UserUpdate}/${user.user_id}`,
+      url: `${api.UserUpdate}?user_id=${user.user_id}`,
       data: {
         first_name: data.first_name,
         last_name: data.last_name,
@@ -162,36 +168,66 @@ const EditMyAccount = ({navigation}: any) => {
         email: data.email,
         address: data.address,
       },
-      method: 'put',
+      method: 'PUT' as httpMethod,
       baseURL: BaseURL,
-      // isConsole: true,
-      // isConsoleParams: true,
-    };
-    const profile_params = {
-      url: `${api.ProfileImage}/${user.user_id}`,
-      method: 'post',
-      isParamsAndmediaFile: true,
-      mediaFile: {
-        uri: profilePhoto.uri,
-        name: profilePhoto.name,
-        type: profilePhoto.type,
-      },
-      fileKey: 'profile_image ',
-      baseURL: BaseURL,
+      isEncrypted: false,
       isConsole: true,
       isConsoleParams: true,
     };
-    const res = await httpRequest(profile_params, setIsLoadingProfile);
-    console.log(res, 'resssssss');
-    // const [res, res1] = await Promise.all([
-    //   // httpRequest(api_params, setIsLoading),
-    // ]);
-    // if (res && res1) {
-    //   console.log(res, res1, 'kkkkkkkkkkkkkkkkk');
+    const profile_params = {
+      url: `${api.ProfileImage}/${user.user_id}`,
+      method: 'POST' as httpMethod,
+      // isParamsAndmediaFile: true,
+      mediaFile: profilePhoto,
+      fileKey: 'profile_image',
+      baseURL: BaseURL,
+      isEncrypted: false,
+      isConsole: true,
+      isConsoleParams: true,
+    };
 
-    //   toaster.show({message: 'Profile updated successfully', type: 'success'});
-    //   // navigation.goBack();
-    // }
+    if (isProfileChange) {
+      const profileResponse = await httpRequest(
+        profile_params,
+        setIsLoadingProfile,
+      );
+      console.log(profileResponse, 'profileResponse');
+      if (profileResponse.success) {
+        dispatch(
+          updateUser({
+            profile_image_original: profileResponse?.data?.result?.original,
+            profile_image_thumbnail: profileResponse?.data?.result?.thumbnail,
+          }),
+        );
+        toaster.show({
+          message: 'Profile Image updated successfully',
+          type: 'success',
+        });
+      }
+    }
+    if (isFormDirty) {
+      const userUpdateResponse = await httpRequest(api_params, setIsLoading);
+      console.log(userUpdateResponse, 'userUpdateResponse');
+      if (userUpdateResponse.success) {
+        reset(user);
+        dispatch(
+          updateUser({
+            first_name: data.first_name,
+            last_name: data.last_name,
+            phone: [data.phone],
+            email: data.email,
+            profile_image_original: userUpdateResponse?.data?.result?.original,
+            profile_image_thumbnail:
+              userUpdateResponse?.data?.result?.thumbnail,
+          }),
+        );
+        toaster.show({
+          message: 'Account updated successfully',
+          type: 'success',
+        });
+      }
+    }
+    // navigation.goBack();
   };
 
   return (
@@ -252,6 +288,12 @@ const EditMyAccount = ({navigation}: any) => {
           </View>
           <View style={{gap: 10}}>
             <Column>
+              <CustomTextNew
+                text={user?.first_name}
+                txtSize={16}
+                txtWeight={'500'}
+                padBottom={10}
+              />
               <CustomTextNew
                 text="First Name"
                 txtSize={16}

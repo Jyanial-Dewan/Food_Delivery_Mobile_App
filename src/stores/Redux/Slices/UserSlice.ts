@@ -9,7 +9,21 @@ interface UserTokenState {
   issuedAt: string;
 }
 
-interface UserState {
+export interface UserUpdateState {
+  // username: string;
+  user_type?: string;
+  email?: string;
+  phone?: string[];
+  first_name?: string;
+  last_name?: string;
+  // created_at: string;
+  // latitude: number | null;
+  // longitude: number | null;
+  // connection_time: string | null;
+  profile_image_original?: string;
+  profile_image_thumbnail?: string;
+}
+export interface UserState {
   user_id: number;
   username: string;
   user_type: string;
@@ -66,6 +80,15 @@ export const userSlice = createSlice({
     setUser: (state, action: PayloadAction<UserState>) => {
       state.user = action.payload;
     },
+    updateUser: (state, action: PayloadAction<Partial<UserUpdateState>>) => {
+      state.user = {
+        ...state.user,
+        // ...action.payload,
+        ...Object.fromEntries(
+          Object.entries(action.payload).filter(([_, v]) => v != null),
+        ),
+      };
+    },
     logout: state => {
       state.token = initialState.token;
       state.user = initialState.user;
@@ -73,6 +96,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const {setToken, setUser, logout} = userSlice.actions;
+export const {setToken, setUser, updateUser, logout} = userSlice.actions;
 
 export default userSlice.reducer;
