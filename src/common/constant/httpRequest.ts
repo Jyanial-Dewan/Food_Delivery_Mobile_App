@@ -15,6 +15,7 @@ interface RequestParams {
   baseURL?: string;
   isConsole?: boolean;
   mediaFile?: any;
+  fileKey?: string;
   isParamsAndmediaFile?: boolean;
   isEncrypted?: boolean;
   isPostOrPutWithParams?: boolean;
@@ -151,7 +152,7 @@ export const httpRequest = async (
           name: params.mediaFile?.fileName || params.mediaFile?.name,
           type: params.mediaFile?.type,
         };
-        formData.append('file', file);
+        formData.append(params?.fileKey ?? 'file', file);
       }
 
       if (params.mediaFile && params.isParamsAndmediaFile) {

@@ -8,8 +8,8 @@ import BottomTabs from './BottomTabs';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {secureStorage} from '../utils/Storage/mmkv';
-import {useDispatch} from 'react-redux';
-import {clearToken} from '../stores/Redux/Slices/UserSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {logout} from '../stores/Redux/Slices/UserSlice';
 import {Avatar, Switch, useTheme} from 'react-native-paper';
 import {setTheme} from '../stores/Redux/Slices/ThemeSlice';
 import MyAccount from '../modules/MyAccount/MyAccount';
@@ -18,16 +18,19 @@ import Settings from '../modules/Settings/Settings';
 import Subscription from '../modules/Subscription/Subscription';
 import Address from '../modules/Address/Address';
 import Payment from '../modules/Payment/Payment';
+import {BaseURL} from '../../App';
+import EditMyAccount from '../modules/MyAccount/EditMyAccount';
 
 const {Navigator, Screen} = createDrawerNavigator();
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const theme = useTheme();
   const activeRoute = props.state.routes[props.state.index];
   const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.user.user);
 
   const handleLogOut = () => {
     secureStorage.removeItem('user_token');
-    dispatch(clearToken());
+    dispatch(logout());
     props.navigation.reset({
       index: 0,
       routes: [{name: 'LoginScreen'}],
@@ -81,6 +84,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     dispatch(setTheme(theme.dark ? 'light' : 'dark'));
     secureStorage.setItem('theme', theme.dark ? 'light' : 'dark');
   };
+
+  console.log(`${BaseURL}/${user?.profileImage}`);
   return (
     <DrawerContentScrollView {...props}>
       <View style={{gap: 10}}>
@@ -88,14 +93,14 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           <Avatar.Image
             style={[styles.avatar, {backgroundColor: theme.colors.secondary}]}
             size={70}
-            source={require('../assets/Profile/profile.png')}
+            source={{uri: `${BaseURL}/${user?.profile_image_thumbnail}`}}
           />
           <View style={{gap: 3}}>
             <Text style={[styles.headerText, {color: theme.colors.surface}]}>
-              Danial Jones
+              {user?.first_name} {user?.last_name}
             </Text>
             <Text style={[styles.headerSubText, {color: theme.colors.surface}]}>
-              danial.jones@gmail.com
+              {user?.email}
             </Text>
             <View style={styles.premiumBadge}>
               <MaterialCommunityIcon name="star" size={14} color={'orange'} />
@@ -221,6 +226,14 @@ const DrawerTabs = () => {
         }}
       />
       <Screen
+        name="EditMyAccount"
+        component={EditMyAccount}
+        options={{
+          headerShown: false,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Screen
         name="MyOrders"
         component={MyOrders}
         options={{
@@ -270,7 +283,7 @@ const styles = StyleSheet.create({
     // padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 10,
     // justifyContent: 'space-between',
   },
   avatar: {
@@ -286,7 +299,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 6,
-    width: '60%',
+    width: '70%',
     justifyContent: 'center',
   },
   headerText: {

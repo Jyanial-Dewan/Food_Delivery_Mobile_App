@@ -1,7 +1,13 @@
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/navigations/RootStack';
-import React, {useCallback, useEffect} from 'react';
-import {LogBox, Text, TextInput, useColorScheme} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  BackHandler,
+  LogBox,
+  Text,
+  TextInput,
+  useColorScheme,
+} from 'react-native';
 import {ToastProvider} from './src/common/components/CustomToast';
 import {
   initialWindowMetrics,
@@ -16,6 +22,7 @@ import {Linking} from 'react-native';
 import {setToken} from './src/stores/Redux/Slices/UserSlice';
 import {COLORS} from './src/common/constant/Themes';
 import {setTheme} from './src/stores/Redux/Slices/ThemeSlice';
+import Alert from './src/common/components/Alert';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
