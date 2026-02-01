@@ -1,36 +1,101 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-// Define Song type (ensure consistency with SongType in your types)
 interface UserTokenState {
   isLoggedIn: boolean;
   user_id: number;
+  user_type: string;
   access_token: string;
   refresh_token: string;
   issuedAt: string;
 }
 
-// Define initial state using Song type
-const initialState: UserTokenState = {
-  isLoggedIn: false,
-  user_id: 0,
-  access_token: '',
-  refresh_token: '',
-  issuedAt: '',
+export interface UserUpdateState {
+  // username: string;
+  user_type?: string;
+  email?: string;
+  phone?: string[];
+  first_name?: string;
+  last_name?: string;
+  // created_at: string;
+  // latitude: number | null;
+  // longitude: number | null;
+  // connection_time: string | null;
+  profile_image_original?: string;
+  profile_image_thumbnail?: string;
+}
+export interface UserState {
+  user_id: number;
+  username: string;
+  user_type: string;
+  email: string;
+  phone: string[];
+  first_name: string;
+  last_name: string;
+  created_at: string;
+  latitude: number | null;
+  longitude: number | null;
+  connection_time: string | null;
+  profile_image_original: string;
+  profile_image_thumbnail: string;
+}
+
+interface UserSliceState {
+  token: UserTokenState;
+  user: UserState;
+}
+
+const initialState: UserSliceState = {
+  token: {
+    isLoggedIn: false,
+    user_id: 0,
+    user_type: '',
+    access_token: '',
+    refresh_token: '',
+    issuedAt: '',
+  },
+  user: {
+    user_id: 0,
+    username: '',
+    user_type: '',
+    email: '',
+    phone: [],
+    first_name: '',
+    last_name: '',
+    created_at: '',
+    latitude: null,
+    longitude: null,
+    connection_time: null,
+    profile_image_original: '',
+    profile_image_thumbnail: '',
+  },
 };
 
-// Create slice with typed actions and reducers
-export const UserSlice = createSlice({
-  name: 'userToken',
+export const userSlice = createSlice({
+  name: 'user',
   initialState,
   reducers: {
     setToken: (state, action: PayloadAction<UserTokenState>) => {
-      return action.payload;
+      state.token = action.payload;
     },
-    token: state => state,
-    clearToken: () => initialState,
+    setUser: (state, action: PayloadAction<UserState>) => {
+      state.user = action.payload;
+    },
+    updateUser: (state, action: PayloadAction<Partial<UserUpdateState>>) => {
+      state.user = {
+        ...state.user,
+        // ...action.payload,
+        ...Object.fromEntries(
+          Object.entries(action.payload).filter(([_, v]) => v != null),
+        ),
+      };
+    },
+    logout: state => {
+      state.token = initialState.token;
+      state.user = initialState.user;
+    },
   },
 });
 
-export const {setToken, token, clearToken} = UserSlice.actions;
+export const {setToken, setUser, updateUser, logout} = userSlice.actions;
 
-export default UserSlice.reducer;
+export default userSlice.reducer;

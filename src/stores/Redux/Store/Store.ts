@@ -1,12 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit';
-import {UserSlice} from '../Slices/UserSlice';
 import {HydrateSlice} from '../Slices/HydrateSlice';
 import {ThemeSlice} from '../Slices/ThemeSlice';
+import {userSlice} from '../Slices/UserSlice';
 
 export const store = configureStore({
   reducer: {
     hydrate: HydrateSlice.reducer,
-    userToken: UserSlice.reducer,
+    user: userSlice.reducer,
     theme: ThemeSlice.reducer,
   },
 });

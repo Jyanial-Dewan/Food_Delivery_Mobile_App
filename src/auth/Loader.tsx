@@ -17,7 +17,7 @@ const Loader = ({navigation}: any) => {
   const isHydrated = useSelector(
     (state: RootState) => state.hydrate.isHydrated,
   );
-  const userToken = useSelector((state: RootState) => state.userToken);
+  const userToken = useSelector((state: RootState) => state.user.token);
   const isOnboarded = secureStorage.getItem('isOnboarded');
   const hasNavigated = useRef(false);
   console.log(userToken, 'userToken');
