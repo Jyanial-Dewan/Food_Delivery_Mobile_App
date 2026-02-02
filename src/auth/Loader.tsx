@@ -43,7 +43,7 @@ const Loader = ({navigation}: any) => {
         secureStorage.setItem('user', JSON.stringify(user_res?.data.result));
       } catch (error) {}
     })();
-  }, [dispatch, userToken.user_id]);
+  }, [dispatch, userToken?.user_id]);
 
   useEffect(() => {
     (async () => {
