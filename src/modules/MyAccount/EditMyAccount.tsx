@@ -31,10 +31,11 @@ import {
   onPickImage,
   onTakePhoto,
 } from '../../utils/ImageSelection/ImageSelection';
+import {RootState} from '../../stores/Redux/Store/Store';
 
 const EditMyAccount = ({navigation}: any) => {
   const theme = useTheme();
-  const user = useSelector((state: any) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
   const [editAccount, setEditAccount] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
@@ -84,7 +85,7 @@ const EditMyAccount = ({navigation}: any) => {
       });
     }
   }, [photoSelectionError, toaster]);
-
+  console.log(user?.phone, 'pppp');
   // Form
   const {control, handleSubmit, setValue, reset, getValues, formState} =
     useForm({
@@ -110,15 +111,15 @@ const EditMyAccount = ({navigation}: any) => {
       data: {
         first_name: data.first_name,
         last_name: data.last_name,
-        phone: data.phone,
+        phone: [data.phone],
         email: data.email,
-        address: data.address,
+        address: data?.address,
       },
       method: 'PUT' as httpMethod,
       baseURL: BaseURL,
       isEncrypted: false,
-      isConsole: true,
-      isConsoleParams: true,
+      // isConsole: true,
+      // isConsoleParams: true,
     };
     const profile_params = {
       url: `${api.ProfileImage}/${user.user_id}`,
@@ -128,8 +129,8 @@ const EditMyAccount = ({navigation}: any) => {
       fileKey: 'profile_image',
       baseURL: BaseURL,
       isEncrypted: false,
-      isConsole: true,
-      isConsoleParams: true,
+      // isConsole: true,
+      // isConsoleParams: true,
     };
 
     if (isProfileChange) {
@@ -137,7 +138,7 @@ const EditMyAccount = ({navigation}: any) => {
         profile_params,
         setIsLoadingProfile,
       );
-      console.log(profileResponse, 'profileResponse');
+
       if (profileResponse.success) {
         dispatch(
           updateUser({
@@ -153,20 +154,24 @@ const EditMyAccount = ({navigation}: any) => {
     }
     if (isFormDirty) {
       const userUpdateResponse = await httpRequest(api_params, setIsLoading);
-      console.log(userUpdateResponse, 'userUpdateResponse');
+
       if (userUpdateResponse.success) {
-        reset(user);
-        dispatch(
-          updateUser({
-            first_name: data.first_name,
-            last_name: data.last_name,
-            phone: [data.phone],
-            email: data.email,
-            profile_image_original: userUpdateResponse?.data?.result?.original,
-            profile_image_thumbnail:
-              userUpdateResponse?.data?.result?.thumbnail,
-          }),
-        );
+        reset({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: data.phone,
+          email: data.email,
+          address: data.address || '',
+        });
+        const userData = {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: [data.phone],
+          email: data.email,
+          profile_image_original: userUpdateResponse?.data?.result?.original,
+          profile_image_thumbnail: userUpdateResponse?.data?.result?.thumbnail,
+        };
+        dispatch(updateUser(userData));
         toaster.show({
           message: 'Account updated successfully',
           type: 'success',
@@ -192,6 +197,7 @@ const EditMyAccount = ({navigation}: any) => {
   useEffect(() => {
     const backAction = () => {
       handleBackPress();
+      navigation.goBack();
       return true;
     };
 
@@ -201,8 +207,42 @@ const EditMyAccount = ({navigation}: any) => {
     );
 
     return () => backHandler.remove();
-  }, [handleBackPress]);
+  }, [handleBackPress, navigation]);
+  // React.useEffect(
+  //   () =>
+  //     navigation.addListener('beforeRemove', e => {
+  //       if (!isFormDirty) {
+  //         return;
+  //       }
 
+  //       // Prevent default behavior of leaving the screen
+  //       e.preventDefault();
+
+  //       // Prompt the user before leaving the screen
+  //       Alert.alert(
+  //         'Discard changes?',
+  //         'You have unsaved changes. Are you sure to discard them and leave the screen?',
+  //         [
+  //           {
+  //             text: "Don't leave",
+  //             style: 'cancel',
+  //             onPress: () => {
+  //               // Do nothing
+  //             },
+  //           },
+  //           {
+  //             text: 'Discard',
+  //             style: 'destructive',
+  //             // If the user confirmed, then we dispatch the action we blocked earlier
+  //             // This will continue the action that had triggered the removal of the screen
+  //             onPress: () => navigation.dispatch(e.data.action),
+  //           },
+  //         ],
+  //       );
+  //     }),
+  //   [navigation, isFormDirty],
+  // );
+  console.log(getValues('phone'), 'phone');
   return (
     <GestureHandlerRootView style={styles.BottomSheetContainer}>
       <ContainerNew

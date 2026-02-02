@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   BackHandler,
   StyleSheet,
@@ -10,19 +10,13 @@ import ContainerNew from '../../common/components/Container';
 import Header1 from '../../common/components/Header1';
 import {Avatar, useTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CustomTextNew from '../../common/components/CustomText';
-import PhoneInput from 'react-native-phone-number-input';
 import {COLORS} from '../../common/constant/Themes';
-import {useForm} from 'react-hook-form';
-import Column from '../../common/components/Column';
-import CustomInputNew from '../../common/components/CustomInput';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import CustomButtonNew from '../../common/components/CustomButton';
-import {httpRequest} from '../../common/constant/httpRequest';
-import ImageCropPicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import {BaseURL} from '../../../App';
+import {RootState} from '../../stores/Redux/Store/Store';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {DrawerTabsScreensParms} from '../../types/DrawerTabsTypes';
 
 const links = [
   {
@@ -43,11 +37,15 @@ const links = [
   },
 ];
 
-const MyAccount = ({navigation}: any) => {
+const MyAccount = ({
+  navigation,
+}: {
+  navigation: DrawerNavigationProp<DrawerTabsScreensParms>;
+}) => {
   const theme = useTheme();
-  const user = useSelector((state: any) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
 
-  const handleEditSave = () => {
+  const handleEdit = () => {
     navigation.navigate('EditMyAccount');
     // setEditAccount(!editAccount);
     // if (editAccount) {
@@ -55,6 +53,19 @@ const MyAccount = ({navigation}: any) => {
     // } else {
     // }
   };
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]);
 
   return (
     <GestureHandlerRootView style={styles.BottomSheetContainer}>
@@ -65,7 +76,7 @@ const MyAccount = ({navigation}: any) => {
             title="My Account"
             // leftFuncPress={() => handleIsEditAccount()}
             rightFuncTitle={'Edit'}
-            rightFuncPress={() => handleEditSave()}
+            rightFuncPress={() => handleEdit()}
           />
         }>
         <View style={{gap: 20, padding: 10}}>

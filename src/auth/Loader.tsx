@@ -10,6 +10,10 @@ import {AppDispatch} from '../stores/Redux/Store/Store';
 import delay from '../common/services/delay';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useTheme} from 'react-native-paper';
+import {api} from '../common/apis/api';
+import {BaseURL} from '../../App';
+import {httpRequest} from '../common/constant/httpRequest';
+import {setUser} from '../stores/Redux/Slices/UserSlice';
 
 const Loader = ({navigation}: any) => {
   const theme = useTheme();
@@ -24,6 +28,22 @@ const Loader = ({navigation}: any) => {
   useEffect(() => {
     dispatch(hydrateAuth());
   }, [dispatch]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const user_api_params = {
+          url: `${api.User}?user_id=${userToken.user_id}`,
+          baseURL: BaseURL,
+          // isConsole: true,
+          // isConsoleParams: true,
+        };
+        const user_res = await httpRequest(user_api_params, () => {});
+        dispatch(setUser(user_res?.data.result));
+        secureStorage.setItem('user', JSON.stringify(user_res?.data.result));
+      } catch (error) {}
+    })();
+  }, [dispatch, userToken.user_id]);
 
   useEffect(() => {
     (async () => {
