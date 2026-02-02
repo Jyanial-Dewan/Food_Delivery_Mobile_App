@@ -21,17 +21,21 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import CustomButtonNew from '../../common/components/CustomButton';
 import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
-import ImageCropPicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import {BaseURL} from '../../../App';
 import {api} from '../../common/apis/api';
 import {useToast} from '../../common/components/CustomToast';
 import {updateUser} from '../../stores/Redux/Slices/UserSlice';
 import {useDispatch} from 'react-redux';
+import {
+  onPickImage,
+  onTakePhoto,
+} from '../../utils/ImageSelection/ImageSelection';
+import {RootState} from '../../stores/Redux/Store/Store';
 
 const EditMyAccount = ({navigation}: any) => {
   const theme = useTheme();
-  const user = useSelector((state: any) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
   const [editAccount, setEditAccount] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
@@ -43,14 +47,13 @@ const EditMyAccount = ({navigation}: any) => {
     type: '',
   });
   const [isProfileChange, setIsProfileChange] = useState(false);
+  const [photoSelectionError, setPhotoSelectionError] = useState('');
   const toaster = useToast();
-  // hooks
+  // Bottomsheet
   const sheetRef = useRef<BottomSheet>(null);
 
-  // variables
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
-  // callbacks
   const handleSheetChange = useCallback((index: number) => {
     console.log('handleSheetChange', index);
   }, []);
@@ -62,76 +65,8 @@ const EditMyAccount = ({navigation}: any) => {
     sheetRef.current?.close();
   }, []);
 
-  // Back button
-  const handleBackPress = () => {
-    handleClosePress();
-    setEditAccount(false);
-    setIsProfileChange(false);
-    setProfilePhoto({
-      uri: user?.profile_image_thumbnail,
-      name: '',
-      type: '',
-    });
-    reset();
-  };
-
-  useEffect(() => {
-    const backAction = () => {
-      handleBackPress();
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
-  }, []);
-
   const handleOpenBottomSheet = () => {
     handleSnapPress(1);
-  };
-
-  // Take photo using camera
-  const onTakePhoto = async () => {
-    try {
-      const image = await ImageCropPicker.openCamera({
-        width: 300,
-        height: 400,
-        cropping: true,
-        compressImageQuality: 0.6,
-      });
-      setProfilePhoto({
-        uri: image.path,
-        name: image.filename || '',
-        type: image.mime || '',
-      });
-    } catch (error) {
-      console.error('Image picker error:', error);
-    }
-  };
-
-  /* Choose Image from gallery */
-  const onPickImage = async () => {
-    try {
-      const image = await ImageCropPicker.openPicker({
-        width: 300,
-        height: 400,
-        cropping: true,
-        compressImageQuality: 0.6,
-      });
-      console.log(image, 'image......');
-      setIsProfileChange(true);
-      setProfilePhoto({
-        uri: image.path,
-        name: image.filename || '',
-        type: image.mime,
-      });
-      handleClosePress();
-    } catch (error) {
-      console.error('Image picker error:', error);
-    }
   };
 
   const handleEditSave = () => {
@@ -142,6 +77,16 @@ const EditMyAccount = ({navigation}: any) => {
     }
   };
 
+  useEffect(() => {
+    if (photoSelectionError) {
+      toaster.show({
+        message: photoSelectionError,
+        type: 'info',
+      });
+    }
+  }, [photoSelectionError, toaster]);
+  console.log(user?.phone, 'pppp');
+  // Form
   const {control, handleSubmit, setValue, reset, getValues, formState} =
     useForm({
       defaultValues: {
@@ -157,22 +102,24 @@ const EditMyAccount = ({navigation}: any) => {
   console.log(isFormDirty);
   const onSubmit = async (data: any) => {
     console.log(data);
-    if (!user?.user_id) return;
+    if (!user?.user_id) {
+      return;
+    }
 
     const api_params = {
       url: `${api.UserUpdate}?user_id=${user.user_id}`,
       data: {
         first_name: data.first_name,
         last_name: data.last_name,
-        phone: data.phone,
+        phone: [data.phone],
         email: data.email,
-        address: data.address,
+        address: data?.address,
       },
       method: 'PUT' as httpMethod,
       baseURL: BaseURL,
       isEncrypted: false,
-      isConsole: true,
-      isConsoleParams: true,
+      // isConsole: true,
+      // isConsoleParams: true,
     };
     const profile_params = {
       url: `${api.ProfileImage}/${user.user_id}`,
@@ -182,8 +129,8 @@ const EditMyAccount = ({navigation}: any) => {
       fileKey: 'profile_image',
       baseURL: BaseURL,
       isEncrypted: false,
-      isConsole: true,
-      isConsoleParams: true,
+      // isConsole: true,
+      // isConsoleParams: true,
     };
 
     if (isProfileChange) {
@@ -191,7 +138,7 @@ const EditMyAccount = ({navigation}: any) => {
         profile_params,
         setIsLoadingProfile,
       );
-      console.log(profileResponse, 'profileResponse');
+
       if (profileResponse.success) {
         dispatch(
           updateUser({
@@ -207,20 +154,24 @@ const EditMyAccount = ({navigation}: any) => {
     }
     if (isFormDirty) {
       const userUpdateResponse = await httpRequest(api_params, setIsLoading);
-      console.log(userUpdateResponse, 'userUpdateResponse');
+
       if (userUpdateResponse.success) {
-        reset(user);
-        dispatch(
-          updateUser({
-            first_name: data.first_name,
-            last_name: data.last_name,
-            phone: [data.phone],
-            email: data.email,
-            profile_image_original: userUpdateResponse?.data?.result?.original,
-            profile_image_thumbnail:
-              userUpdateResponse?.data?.result?.thumbnail,
-          }),
-        );
+        reset({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: data.phone,
+          email: data.email,
+          address: data.address || '',
+        });
+        const userData = {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: [data.phone],
+          email: data.email,
+          profile_image_original: userUpdateResponse?.data?.result?.original,
+          profile_image_thumbnail: userUpdateResponse?.data?.result?.thumbnail,
+        };
+        dispatch(updateUser(userData));
         toaster.show({
           message: 'Account updated successfully',
           type: 'success',
@@ -230,6 +181,68 @@ const EditMyAccount = ({navigation}: any) => {
     // navigation.goBack();
   };
 
+  // Back button
+  const handleBackPress = useCallback(() => {
+    handleClosePress();
+    setEditAccount(false);
+    setIsProfileChange(false);
+    setProfilePhoto({
+      uri: user?.profile_image_thumbnail,
+      name: '',
+      type: '',
+    });
+    reset();
+  }, [handleClosePress, reset, user?.profile_image_thumbnail]);
+
+  useEffect(() => {
+    const backAction = () => {
+      handleBackPress();
+      navigation.goBack();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [handleBackPress, navigation]);
+  // React.useEffect(
+  //   () =>
+  //     navigation.addListener('beforeRemove', e => {
+  //       if (!isFormDirty) {
+  //         return;
+  //       }
+
+  //       // Prevent default behavior of leaving the screen
+  //       e.preventDefault();
+
+  //       // Prompt the user before leaving the screen
+  //       Alert.alert(
+  //         'Discard changes?',
+  //         'You have unsaved changes. Are you sure to discard them and leave the screen?',
+  //         [
+  //           {
+  //             text: "Don't leave",
+  //             style: 'cancel',
+  //             onPress: () => {
+  //               // Do nothing
+  //             },
+  //           },
+  //           {
+  //             text: 'Discard',
+  //             style: 'destructive',
+  //             // If the user confirmed, then we dispatch the action we blocked earlier
+  //             // This will continue the action that had triggered the removal of the screen
+  //             onPress: () => navigation.dispatch(e.data.action),
+  //           },
+  //         ],
+  //       );
+  //     }),
+  //   [navigation, isFormDirty],
+  // );
+  console.log(getValues('phone'), 'phone');
   return (
     <GestureHandlerRootView style={styles.BottomSheetContainer}>
       <ContainerNew
@@ -240,6 +253,7 @@ const EditMyAccount = ({navigation}: any) => {
             leftFuncPress={() => handleBackPress()}
             rightFuncTitle={'Save'}
             rightFuncPress={() => handleEditSave()}
+            leftNavigationFuncPress={() => navigation.navigate('MyAccount')}
           />
         }>
         {isLoading ? (
@@ -288,12 +302,6 @@ const EditMyAccount = ({navigation}: any) => {
           </View>
           <View style={{gap: 10}}>
             <Column>
-              <CustomTextNew
-                text={user?.first_name}
-                txtSize={16}
-                txtWeight={'500'}
-                padBottom={10}
-              />
               <CustomTextNew
                 text="First Name"
                 txtSize={16}
@@ -422,7 +430,14 @@ const EditMyAccount = ({navigation}: any) => {
               disabled={isLoading}
               btnText="Take Photo"
               isLoading={isLoading}
-              onBtnPress={() => onTakePhoto()}
+              onBtnPress={() =>
+                onTakePhoto({
+                  setPhoto: setProfilePhoto,
+                  setIsPictureSelected: setIsProfileChange,
+                  handleClosePress: handleClosePress,
+                  setError: setPhotoSelectionError,
+                })
+              }
               btnstyle={styles.btn}
               btnTextStyle={styles.btnTxt}
             />
@@ -430,7 +445,14 @@ const EditMyAccount = ({navigation}: any) => {
               disabled={isLoading}
               btnText="Choose from gallery"
               isLoading={isLoading}
-              onBtnPress={() => onPickImage()}
+              onBtnPress={() =>
+                onPickImage({
+                  setIsPictureSelected: setIsProfileChange,
+                  setPhoto: setProfilePhoto,
+                  handleClosePress: handleClosePress,
+                  setError: setPhotoSelectionError,
+                })
+              }
               btnstyle={styles.btn}
               btnTextStyle={styles.btnTxt}
             />

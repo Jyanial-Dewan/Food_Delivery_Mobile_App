@@ -37,6 +37,7 @@ export interface UserState {
   connection_time: string | null;
   profile_image_original: string;
   profile_image_thumbnail: string;
+  address?: string;
 }
 
 interface UserSliceState {
@@ -67,6 +68,7 @@ const initialState: UserSliceState = {
     connection_time: null,
     profile_image_original: '',
     profile_image_thumbnail: '',
+    address: '',
   },
 };
 

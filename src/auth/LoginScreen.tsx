@@ -14,7 +14,7 @@ import {useToast} from '../common/components/CustomToast';
 import {useIsFocused} from '@react-navigation/native';
 import {RootStackScreensParms} from '../types/RootStactTypes';
 import {ILogInPayloadType} from '../types/GeneralTypes';
-import {httpRequest} from '../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../common/constant/httpRequest';
 import {api} from '../common/apis/api';
 import {BaseURL} from '../../App';
 import {secureStorage} from '../utils/Storage/mmkv';
@@ -78,7 +78,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     const api_params = {
       url: api.AuthAppsLogin,
       data: loginPayload,
-      method: 'post',
+      method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
       // isConsoleParams: true,
@@ -89,7 +89,6 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
       const user_api_params = {
         url: `${api.User}?user_id=${res.data.user_id}`,
-        method: 'get',
         baseURL: BaseURL,
         // isConsole: true,
         // isConsoleParams: true,

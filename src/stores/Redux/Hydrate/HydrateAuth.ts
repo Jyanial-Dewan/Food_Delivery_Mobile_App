@@ -9,7 +9,7 @@ export const hydrateAuth = () => async (dispatch: AppDispatch) => {
     const user = await secureStorage.getItem('user');
 
     if (userToken) {
-      dispatch(setToken(userToken));
+      dispatch(setToken(JSON.parse(userToken)));
       if (user) {
         dispatch(setUser(JSON.parse(user)));
       }
