@@ -12,7 +12,6 @@ import Header1 from '../../common/components/Header1';
 import {Avatar, useTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomTextNew from '../../common/components/CustomText';
-import PhoneInput from 'react-native-phone-number-input';
 import {COLORS} from '../../common/constant/Themes';
 import {useForm} from 'react-hook-form';
 import Column from '../../common/components/Column';
@@ -33,13 +32,13 @@ import {
 } from '../../utils/ImageSelection/ImageSelection';
 import {RootState} from '../../stores/Redux/Store/Store';
 import parsePhoneNumber from 'libphonenumber-js';
+import CustomPhoneNumber from '../../common/components/CustomPhoneNumber';
 
 const EditMyAccount = ({navigation}: any) => {
   const theme = useTheme();
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
   const [editAccount, setEditAccount] = useState(false);
-  const phoneInput = useRef<PhoneInput>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState({
@@ -343,23 +342,11 @@ const EditMyAccount = ({navigation}: any) => {
                 txtWeight={'500'}
                 padBottom={10}
               />
-              <PhoneInput
-                ref={phoneInput}
-                defaultValue={nationalNumber}
-                defaultCode={(countryCode as any) ?? 'BD'}
-                layout="first"
-                onChangeFormattedText={text => {
-                  setValue('phone', text);
-                  // setFormattedValue(text);
-                }}
-                containerStyle={styles.phoneContainer}
-                textInputStyle={styles.phoneTextInput}
-                codeTextStyle={{
-                  color: '#757775ff',
-                }}
-                // withDarkTheme
-                // withShadow
-                // autoFocus
+              <CustomPhoneNumber
+                name={'phone'}
+                phoneNumber={user.phone[0]}
+                control={control}
+                setValue={setValue}
               />
             </Column>
 
@@ -512,28 +499,6 @@ const styles = StyleSheet.create({
     // height: 20,
     // width: 20,
   },
-  headerText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  headerSubText: {
-    fontSize: 14,
-    fontWeight: 'normal',
-  },
-  headerContent: {gap: 3, justifyContent: 'center', alignItems: 'center'},
-  link: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 6,
-    marginVertical: 4,
-  },
-  linkContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
   text: {
     fontSize: 16,
     fontWeight: 'normal',
@@ -543,23 +508,6 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  phoneContainer: {
-    borderWidth: 1,
-    borderColor: COLORS.offDay,
-    // height: 50,
-    width: '100%',
-    paddingHorizontal: 3,
-    paddingVertical: 0,
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9',
-  },
-  phoneTextInput: {
-    // fontSize: 16,
-    // height: 50,
-    fontWeight: '500',
-    color: '#757775',
-    padding: 0,
   },
   BottomSheetContainer: {
     flex: 1,
