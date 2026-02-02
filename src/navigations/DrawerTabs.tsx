@@ -192,6 +192,7 @@ const DrawerTabs = () => {
       drawerContent={props => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: false,
+        drawerPosition: 'right',
         drawerType: 'slide',
         lazy: true,
         swipeEdgeWidth: 0,

@@ -31,7 +31,6 @@ import {
   onTakePhoto,
 } from '../../utils/ImageSelection/ImageSelection';
 import {RootState} from '../../stores/Redux/Store/Store';
-import parsePhoneNumber from 'libphonenumber-js';
 import CustomPhoneNumber from '../../common/components/CustomPhoneNumber';
 
 const EditMyAccount = ({navigation}: any) => {
@@ -85,29 +84,21 @@ const EditMyAccount = ({navigation}: any) => {
       });
     }
   }, [photoSelectionError, toaster]);
-  console.log(user?.phone, 'pppp');
 
-  const phoneNumber = parsePhoneNumber(String(user?.phone[0]) || '');
-  console.log(user?.phone[0], 'ddddddd');
-  const countryCode = phoneNumber?.country; // "BD"
-  const nationalNumber = phoneNumber?.nationalNumber; // "1812111111"
-  console.log(countryCode, nationalNumber, 'country code');
   // Form
-  const {control, handleSubmit, setValue, reset, getValues, formState} =
-    useForm({
-      defaultValues: {
-        first_name: user?.first_name || '',
-        last_name: user?.last_name || '',
-        phone: user?.phone?.[0] || '',
-        email: user?.email || '',
-        address: user?.address || '',
-      },
-    });
+  const {control, handleSubmit, setValue, reset, formState} = useForm({
+    defaultValues: {
+      first_name: user?.first_name || '',
+      last_name: user?.last_name || '',
+      phone: user?.phone?.[0] || '',
+      email: user?.email || '',
+      address: user?.address || '',
+    },
+  });
   const {dirtyFields} = formState;
   const isFormDirty = Object.keys(dirtyFields).length > 0;
-  console.log(isFormDirty);
+
   const onSubmit = async (data: any) => {
-    console.log(data);
     if (!user?.user_id) {
       return;
     }
@@ -248,7 +239,7 @@ const EditMyAccount = ({navigation}: any) => {
   //     }),
   //   [navigation, isFormDirty],
   // );
-  console.log(getValues('phone'), 'phone');
+
   return (
     <GestureHandlerRootView style={styles.BottomSheetContainer}>
       <ContainerNew

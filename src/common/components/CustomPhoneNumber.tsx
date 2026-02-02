@@ -60,7 +60,7 @@ const CustomPhoneNumber = ({
   const phone = parsePhoneNumber(phoneNumber);
   const countryCode = phone?.country; // "BD"
   const nationalNumber = phone?.nationalNumber; // "1812111111"
-  console.log(countryCode, nationalNumber, 'country code');
+
   return (
     <Fragment>
       <Controller
