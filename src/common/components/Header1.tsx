@@ -10,6 +10,7 @@ interface IHeader1Props {
   rightFuncTitle?: string;
   rightFuncIcon?: string;
   rightFuncPress?: () => void;
+  leftNavigationFuncPress?: () => void;
 }
 
 const Header1 = ({
@@ -18,12 +19,13 @@ const Header1 = ({
   rightFuncIcon,
   rightFuncPress,
   leftFuncPress,
+  leftNavigationFuncPress: navigationFunc,
 }: IHeader1Props) => {
   const theme = useTheme();
   const navigation = useNavigation<any>();
   const goBack = () => {
     leftFuncPress && leftFuncPress();
-    navigation.goBack();
+    navigationFunc ? navigationFunc() : navigation.goBack();
   };
 
   return (
