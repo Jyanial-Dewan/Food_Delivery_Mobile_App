@@ -32,6 +32,7 @@ import {
   onTakePhoto,
 } from '../../utils/ImageSelection/ImageSelection';
 import {RootState} from '../../stores/Redux/Store/Store';
+import parsePhoneNumber from 'libphonenumber-js';
 
 const EditMyAccount = ({navigation}: any) => {
   const theme = useTheme();
@@ -86,6 +87,12 @@ const EditMyAccount = ({navigation}: any) => {
     }
   }, [photoSelectionError, toaster]);
   console.log(user?.phone, 'pppp');
+
+  const phoneNumber = parsePhoneNumber(String(user?.phone[0]) || '');
+  console.log(user?.phone[0], 'ddddddd');
+  const countryCode = phoneNumber?.country; // "BD"
+  const nationalNumber = phoneNumber?.nationalNumber; // "1812111111"
+  console.log(countryCode, nationalNumber, 'country code');
   // Form
   const {control, handleSubmit, setValue, reset, getValues, formState} =
     useForm({
@@ -338,8 +345,8 @@ const EditMyAccount = ({navigation}: any) => {
               />
               <PhoneInput
                 ref={phoneInput}
-                defaultValue={getValues('phone')}
-                defaultCode="BD"
+                defaultValue={nationalNumber}
+                defaultCode={(countryCode as any) ?? 'BD'}
                 layout="first"
                 onChangeFormattedText={text => {
                   setValue('phone', text);
