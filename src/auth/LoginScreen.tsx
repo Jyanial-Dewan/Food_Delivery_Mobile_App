@@ -8,18 +8,18 @@ import CustomTextNew from '../common/components/CustomText';
 import CustomInputNew from '../common/components/CustomInput';
 import Row from '../common/components/Row';
 import CustomButtonNew from '../common/components/CustomButton';
-import {Button, Checkbox, Dialog, Portal, useTheme} from 'react-native-paper';
+import {Checkbox, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../common/components/CustomToast';
 import {useIsFocused} from '@react-navigation/native';
 import {RootStackScreensParms} from '../types/RootStactTypes';
 import {ILogInPayloadType} from '../types/GeneralTypes';
-import {httpRequest} from '../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../common/constant/httpRequest';
 import {api} from '../common/apis/api';
 import {BaseURL} from '../../App';
 import {secureStorage} from '../utils/Storage/mmkv';
 import {useDispatch} from 'react-redux';
-import {setToken} from '../stores/Redux/Slices/UserSlice';
+import {setToken, setUser} from '../stores/Redux/Slices/UserSlice';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 // import Alert from '../common/components/Alert';
 import {BackHandler} from 'react-native';
@@ -50,7 +50,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   });
 
   useEffect(() => {
-    const user = secureStorage.getItem('user');
+    const user = secureStorage.getItem('emailOrUser');
     const password = secureStorage.getItem('password');
 
     if (user && password) {
@@ -63,10 +63,10 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   const onSubmit = async (data: ILogInPayloadType) => {
     // store remember me data
     if (checked) {
-      secureStorage.setItem('user', data.user);
+      secureStorage.setItem('emailOrUser', data.user);
       secureStorage.setItem('password', data.password);
     } else {
-      secureStorage.removeItem('user');
+      secureStorage.removeItem('emailOrUser');
       secureStorage.removeItem('password');
     }
 
@@ -78,7 +78,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     const api_params = {
       url: api.AuthAppsLogin,
       data: loginPayload,
-      method: 'post',
+      method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
       // isConsoleParams: true,
@@ -87,8 +87,18 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     const res = await httpRequest(api_params, setIsLoading);
     console.log(res, 'res');
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
+      const user_api_params = {
+        url: `${api.User}?user_id=${res.data.user_id}`,
+        baseURL: BaseURL,
+        // isConsole: true,
+        // isConsoleParams: true,
+      };
+      const user_res = await httpRequest(user_api_params, setIsLoading);
+      console.log(user_res, 'user res');
       dispatch(setToken(res?.data));
+      dispatch(setUser(user_res?.data.result));
       secureStorage.setItem('user_token', JSON.stringify(res?.data));
+      secureStorage.setItem('user', JSON.stringify(user_res?.data.result));
       navigation.replace('DrawerTabs');
     } else {
       toaster.show({message: res?.data?.message, type: 'warning'});

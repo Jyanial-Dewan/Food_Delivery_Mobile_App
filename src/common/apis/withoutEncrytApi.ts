@@ -1,9 +1,9 @@
 import {api} from './api';
 const withoutEncryptionApi = [
   api.AuthAppsLogin,
-  api.Users,
-  api.VerifyInvitation,
-  api.Tenants,
+  api.UserUpdate,
+  // api.Users,
+  // api.ProfileImage
 ];
 
 export {withoutEncryptionApi};

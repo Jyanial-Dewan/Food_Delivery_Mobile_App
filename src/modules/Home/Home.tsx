@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {secureStorage} from '../../utils/Storage/mmkv';
 import {useNavigation} from '@react-navigation/native';
 import ContainerNew from '../../common/components/Container';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,20 +15,22 @@ import {useTheme} from 'react-native-paper';
 import BgImage from '../../assets/Banner/Burger.jpg';
 import ImageFlatList from './ImageFlatList';
 import RestaurantList from './RestaurantList';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../stores/Redux/Store/Store';
 
 const Home = () => {
   const theme = useTheme();
   const drawerNav = useNavigation<any>();
-  const user = secureStorage.getItem('user');
+  const user = useSelector((state: RootState) => state.user.user);
   const [search, setSearch] = useState('');
-  console.log(user);
+
   return (
     <ContainerNew style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={{gap: 8}}>
           <Text
             style={[styles.text, {color: theme.colors.surface, fontSize: 14}]}>
-            Hi, {user}
+            Hi, {user.username}
           </Text>
           <Text
             style={[styles.text, {color: theme.colors.surface, fontSize: 16}]}>
