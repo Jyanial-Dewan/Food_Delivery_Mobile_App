@@ -1,6 +1,5 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../modules/Home/Home';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import TrackOrder from '../modules/TrackOrder/TrackOrder';
 import Cart from '../modules/Cart/Cart';
@@ -8,6 +7,7 @@ import Notification from '../modules/Notification/Notification';
 import Favorite from '../modules/Favorite/Favorite';
 import {COLORS} from '../common/constant/Themes';
 import {useTheme} from 'react-native-paper';
+import HomeStack from './HomeStack';
 
 const {Navigator, Screen} = createBottomTabNavigator();
 const BottomTabs = () => {
@@ -24,7 +24,7 @@ const BottomTabs = () => {
       }}>
       <Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarLabel: 'Home',
           tabBarLabelStyle: {display: 'none'},
