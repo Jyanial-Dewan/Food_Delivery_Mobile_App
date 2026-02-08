@@ -31,3 +31,19 @@ export interface IUser {
   profile_image_original?: string;
   profile_image_thumbnail?: string;
 }
+
+export interface IFoodItem {
+  food_id: number;
+  user_id: number;
+  name: string;
+  description?: string;
+  price: number;
+  discount_price?: number;
+  category: string;
+  is_veg: boolean;
+  is_available: boolean;
+  calories?: number;
+  created_at: Date;
+  updated_at: Date;
+  image_urls: string[];
+}
