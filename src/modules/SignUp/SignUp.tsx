@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useToast} from '../../common/components/CustomToast';
 import {RootStackScreensParms} from '../../types/RootStactTypes';
 import {ISignUpPayloadType} from '../../types/GeneralTypes';
-import {httpRequest} from '../../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
 import PhoneInput from 'react-native-phone-number-input';
@@ -65,7 +65,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
     const api_params = {
       url: api.UsersCreate,
       data: loginPayload,
-      method: 'post',
+      method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
       // isConsoleParams: true,
