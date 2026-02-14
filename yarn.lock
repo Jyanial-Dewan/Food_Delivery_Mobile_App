@@ -7076,7 +7076,7 @@ react-native-phone-number-input@^2.1.0:
     google-libphonenumber "^3.2.10"
     react-native-country-picker-modal "^2.0.0"
 
-"react-native-reanimated@>= 1.0.0", react-native-reanimated@>=2.2.0, react-native-reanimated@3.6.2:
+react-native-reanimated@*, "react-native-reanimated@>= 1.0.0", react-native-reanimated@>=2.2.0, react-native-reanimated@3.6.2:
   version "3.6.2"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.6.2.tgz"
   integrity sha512-IIMREMOrxhtK35drfpzh2UhxNqAOHnuvGgtMofj7yHcMj16tmWZR2zFvMUf6z2MfmXv+aVgFQ6TRZ6yKYf7LNA==
@@ -7123,6 +7123,11 @@ react-native-vector-icons@^10.1.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-vision-camera@4.3.2:
+  version "4.3.2"
+  resolved "https://registry.npmjs.org/react-native-vision-camera/-/react-native-vision-camera-4.3.2.tgz"
+  integrity sha512-zrMWS+I5kIV9UShryRBOjV0PfOvKIH1LlvnQKw8n4D2NOuT6d3dTZ1KtwmktorwrPxRPf3FRktSn2Gv6F1kmWQ==
 
 react-native-web@*, react-native-web@0.9.x:
   version "0.9.13"

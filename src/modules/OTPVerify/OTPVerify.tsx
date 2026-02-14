@@ -8,7 +8,7 @@ import {useState} from 'react';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
 import {useForm} from 'react-hook-form';
-import {httpRequest} from '../../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import {useNavigation} from '@react-navigation/native';
 import Alert from '../../common/components/Alert';
 const OTPVerify = () => {
@@ -24,7 +24,7 @@ const OTPVerify = () => {
     const api_params = {
       url: api.AuthAppsLogin,
       data: {OTPcode: data.OTPcode},
-      method: 'post',
+      method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
       // isConsoleParams: true,
