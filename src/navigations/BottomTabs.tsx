@@ -8,6 +8,7 @@ import Notification from '../modules/Notification/Notification';
 import Favorite from '../modules/Favorite/Favorite';
 import {COLORS} from '../common/constant/Themes';
 import {useTheme} from 'react-native-paper';
+import Scanner from '../modules/Scanner/Scanner';
 
 const {Navigator, Screen} = createBottomTabNavigator();
 const BottomTabs = () => {
@@ -72,7 +73,7 @@ const BottomTabs = () => {
       />
       <Screen
         name="Favorite"
-        component={Favorite}
+        component={Scanner}
         options={{
           tabBarLabel: 'Favorite',
           tabBarLabelStyle: {display: 'none'},
