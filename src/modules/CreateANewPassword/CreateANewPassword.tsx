@@ -8,7 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
-import {httpRequest} from '../../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TouchableOpacity} from 'react-native';
 import CustomButtonNew from '../../common/components/CustomButton';
@@ -40,7 +40,7 @@ const CreateANewPassword = () => {
         new_password: data.new_password,
         retype_password: data.retype_password,
       },
-      method: 'post',
+      method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
       // isConsoleParams: true,

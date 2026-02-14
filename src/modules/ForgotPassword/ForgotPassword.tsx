@@ -11,7 +11,7 @@ import CustomTextNew from '../../common/components/CustomText';
 import CustomInputNew from '../../common/components/CustomInput';
 import {api} from '../../common/apis/api';
 import {BaseURL} from '../../../App';
-import {httpRequest} from '../../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 
@@ -30,7 +30,7 @@ const ForgotPassword = () => {
     const api_params = {
       url: api.AuthAppsLogin,
       data: {email: data.email},
-      method: 'post',
+      method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
       // isConsoleParams: true,
