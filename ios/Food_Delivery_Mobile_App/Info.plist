@@ -35,6 +35,12 @@
 	<string></string>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
+  <key>NSCameraUsageDescription</key>
+  <string>We need camera access to take photos</string>
+
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>We need photo access to select images</string>
+
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
