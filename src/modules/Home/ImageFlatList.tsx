@@ -14,6 +14,7 @@ import kebabImage from '../../assets/Images/Kebab1.jpg';
 import riceDishesImage from '../../assets/Images/Rice_Dishes1.jpg';
 import shwarmaImage from '../../assets/Images/Shawrma1.jpg';
 import snackImage from '../../assets/Images/Snacks1.jpg';
+import {useTheme} from 'react-native-paper';
 
 const images = [
   {id: '1', src: chineseImage, name: 'Chinese'},
@@ -33,6 +34,7 @@ const images = [
 ];
 
 const ImageFlatList = () => {
+  const theme = useTheme();
   return (
     <FlatList
       data={images}
@@ -46,7 +48,7 @@ const ImageFlatList = () => {
             style={{width: 80, height: 60, marginRight: 10, borderRadius: 8}}
             resizeMode="cover"
           />
-          <Text>{item.name}</Text>
+          <Text style={{color: theme.colors.surface}}>{item.name}</Text>
         </View>
       )}
     />
@@ -54,5 +56,3 @@ const ImageFlatList = () => {
 };
 
 export default ImageFlatList;
-
-const styles = StyleSheet.create({});

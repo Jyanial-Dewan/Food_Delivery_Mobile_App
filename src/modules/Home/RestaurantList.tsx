@@ -12,8 +12,10 @@ import {BaseURL} from '../../../App';
 import {httpRequest} from '../../common/constant/httpRequest';
 import {useNavigation} from '@react-navigation/native';
 import {RestaurantDetailNavigationProp} from '../../types/HomeStackTypes';
+import {useTheme} from 'react-native-paper';
 
 const RestaurantList = () => {
+  const theme = useTheme();
   const [restaurants, setRestaurants] = useState<IUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +58,7 @@ const RestaurantList = () => {
               style={styles.imageStyle}
               resizeMode="contain"
             />
-            <Text>{item.username}</Text>
+            <Text style={{color: theme.colors.surface}}>{item.username}</Text>
           </TouchableOpacity>
         )}
       />

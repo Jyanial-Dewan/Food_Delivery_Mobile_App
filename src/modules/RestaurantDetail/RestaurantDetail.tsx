@@ -1,4 +1,4 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {IFoodItem} from '../../types/GeneralTypes';
@@ -6,9 +6,11 @@ import {BaseURL} from '../../../App';
 import {httpRequest} from '../../common/constant/httpRequest';
 import ContainerNew from '../../common/components/Container';
 import {Image} from 'react-native';
+import {useTheme} from 'react-native-paper';
 
 const RestaurantDetail = () => {
   const route = useRoute();
+  const theme = useTheme();
   const {restaurantId} = route.params as {restaurantId: number};
   const [foodItems, setFoodItems] = useState<IFoodItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,16 +35,20 @@ const RestaurantDetail = () => {
   return (
     <ContainerNew style={styles.container}>
       <View>
-        <Text style={{marginBottom: 10}}>Food Items List</Text>
+        <Text style={{marginBottom: 10, color: theme.colors.surface}}>
+          Food Items List
+        </Text>
         <FlatList
           data={foodItems}
           keyExtractor={item => String(item.food_id)}
           renderItem={({item}) => (
-            <TouchableOpacity style={styles.boxStyle}>
+            <View style={styles.boxStyle}>
               <View>
-                <Text>{item.name}</Text>
-                <Text>{item.price} Taka</Text>
-                <Text style={{maxWidth: '80%'}}>
+                <Text style={{color: theme.colors.surface}}>{item.name}</Text>
+                <Text style={{color: theme.colors.surface}}>
+                  {item.discount_price} Taka
+                </Text>
+                <Text style={{maxWidth: '80%', color: theme.colors.surface}}>
                   {item.description?.slice(0, 80)}
                 </Text>
               </View>
@@ -51,7 +57,7 @@ const RestaurantDetail = () => {
                 style={styles.imageStyle}
                 resizeMode="contain"
               />
-            </TouchableOpacity>
+            </View>
           )}
         />
       </View>
