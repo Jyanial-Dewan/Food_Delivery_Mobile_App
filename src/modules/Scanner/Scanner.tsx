@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {useTheme} from 'react-native-paper';
 import {
   Camera,
   useCameraDevice,
@@ -9,7 +10,9 @@ import {
 
 function Scanner() {
   const device = useCameraDevice('back');
+  const theme = useTheme();
   const {hasPermission, requestPermission} = useCameraPermission();
+  const [scannedValue, setScannedValue] = useState('');
 
   useEffect(() => {
     if (!hasPermission) {
@@ -18,9 +21,12 @@ function Scanner() {
   }, [hasPermission, requestPermission]);
 
   const codeScanner = useCodeScanner({
-    codeTypes: ['qr', 'ean-13', 'code-128'], // add barcode types you want
+    codeTypes: ['qr', 'ean-13', 'code-128'],
     onCodeScanned: codes => {
-      console.log('Scanned value:', codes[0]?.value);
+      const value = codes[0]?.value;
+      if (value) {
+        setScannedValue(value);
+      }
     },
   });
 
@@ -41,12 +47,20 @@ function Scanner() {
   }
 
   return (
-    <Camera
-      style={StyleSheet.absoluteFill}
-      device={device}
-      isActive={true}
-      codeScanner={codeScanner}
-    />
+    <View style={{flex: 1}}>
+      <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true}
+        codeScanner={codeScanner}
+      />
+      {/* Overlay text */}
+      <View style={styles.overlay}>
+        <Text style={[styles.text, {color: theme.colors.surface}]}>
+          {scannedValue}
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -57,5 +71,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 40,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 12,
+    borderRadius: 8,
+  },
+  text: {
+    fontSize: 16,
   },
 });

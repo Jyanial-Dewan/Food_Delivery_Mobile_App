@@ -33,7 +33,7 @@ const RestaurantDetail = () => {
   }, [currentPage, restaurantId]);
   console.log(foodItems);
   return (
-    <ContainerNew style={styles.container}>
+    <ContainerNew style={styles.container} isScrollView={false}>
       <View>
         <Text style={{marginBottom: 10, color: theme.colors.surface}}>
           Food Items List

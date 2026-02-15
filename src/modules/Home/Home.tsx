@@ -25,12 +25,12 @@ const Home = () => {
   const [search, setSearch] = useState('');
 
   return (
-    <ContainerNew style={styles.container}>
+    <ContainerNew style={styles.container} isScrollView={true}>
       <View style={styles.headerContainer}>
         <View style={{gap: 8}}>
           <Text
             style={[styles.text, {color: theme.colors.surface, fontSize: 14}]}>
-            Hi, {user.username}
+            Hi, {user.username ?? ''}
           </Text>
           <Text
             style={[styles.text, {color: theme.colors.surface, fontSize: 16}]}>
@@ -73,7 +73,7 @@ const Home = () => {
         <ImageFlatList />
       </View>
 
-      <View style={{marginTop: 20}}>
+      <View style={{marginTop: 20, flex: 1}}>
         <RestaurantList />
       </View>
     </ContainerNew>

@@ -240,15 +240,6 @@ const ContainerNew: React.FC<ContainerNewProps> = ({
         </View>
       )}
       {footer}
-      {/* <Snackbar
-        style={styles.snack}
-        visible={isShowBar}
-        onDismiss={() => console.log('hello')}>
-        <CustomTextNew
-          text={'You are offline. Please check your network.'}
-          txtStyle={styles.snackText}
-        />
-      </Snackbar> */}
     </SafeAreaView>
   );
 };
