@@ -46,22 +46,23 @@ const RestaurantList = () => {
   return (
     <View>
       <Text style={{marginBottom: 10}}>Restaurant List</Text>
-      <FlatList
-        data={restaurants}
-        keyExtractor={item => String(item.user_id)}
-        renderItem={({item}) => (
+      <View>
+        {restaurants.map(restaurant => (
           <TouchableOpacity
             style={styles.boxStyle}
-            onPress={() => handlePress(item.user_id)}>
+            onPress={() => handlePress(restaurant.user_id)}
+            key={restaurant.user_id}>
             <Image
-              source={{uri: `${BaseURL}/${item.profile_image_thumbnail}`}}
+              source={{uri: `${BaseURL}/${restaurant.profile_image_thumbnail}`}}
               style={styles.imageStyle}
               resizeMode="contain"
             />
-            <Text style={{color: theme.colors.surface}}>{item.username}</Text>
+            <Text style={{color: theme.colors.surface}}>
+              {restaurant.username ?? ''}
+            </Text>
           </TouchableOpacity>
-        )}
-      />
+        ))}
+      </View>
     </View>
   );
 };

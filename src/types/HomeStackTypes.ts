@@ -1,11 +1,4 @@
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
 export interface NavigationStackParamList {
-  [key: string]: undefined | object;
+  HomeMain: undefined;
   RestaurantDetail: {restaurantId: number};
 }
-
-export type RestaurantDetailNavigationProp = NativeStackNavigationProp<
-  NavigationStackParamList,
-  'RestaurantDetail'
->;
