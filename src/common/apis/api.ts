@@ -5,7 +5,5 @@ export const api = {
   UserUpdate: '/api/users/user',
   Users: '/users',
   ProfileImage: '/api/profile_image',
-  VerifyInvitation: '/invitation/verify',
-  Tenants: '/tenants',
-  JobTitles: '/job_titles',
+  CartItems: '/api/cart_items',
 };
