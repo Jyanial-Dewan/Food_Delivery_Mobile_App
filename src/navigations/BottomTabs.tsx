@@ -8,9 +8,12 @@ import {COLORS} from '../common/constant/Themes';
 import {useTheme} from 'react-native-paper';
 import Scanner from '../modules/Scanner/Scanner';
 import HomeStack from './HomeStack';
+import {useSelector} from 'react-redux';
+import {RootState} from '../stores/Redux/Store/Store';
 
 const {Navigator, Screen} = createBottomTabNavigator();
 const BottomTabs = () => {
+  const cart = useSelector((state: RootState) => state.cart.cart);
   const theme = useTheme();
   return (
     <Navigator
@@ -60,6 +63,7 @@ const BottomTabs = () => {
         options={{
           tabBarLabel: 'Cart',
           tabBarLabelStyle: {display: 'none'},
+          tabBarBadge: cart.length,
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <Icon

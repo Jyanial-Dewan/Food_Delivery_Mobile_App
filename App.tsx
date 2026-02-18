@@ -23,6 +23,9 @@ import {setToken} from './src/stores/Redux/Slices/UserSlice';
 import {COLORS} from './src/common/constant/Themes';
 import {setTheme} from './src/stores/Redux/Slices/ThemeSlice';
 import Alert from './src/common/components/Alert';
+import {httpRequest} from './src/common/constant/httpRequest';
+import {api} from './src/common/apis/api';
+import {setCart} from './src/stores/Redux/Slices/CartSlice';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
@@ -84,6 +87,8 @@ const Main = () => {
   const colorScheme = useColorScheme();
   // const navigation = useNavigation<RootStackNavigationProp>();
   const selectedTheme = useSelector((state: RootState) => state.theme.theme);
+  const user = useSelector((state: RootState) => state.user.user);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!selectedTheme) {
@@ -100,6 +105,26 @@ const Main = () => {
     const user_token = JSON.parse(secureStorage.getItem('user_token'));
     dispatch(setToken(user_token));
   }, [dispatch]);
+
+  useEffect(() => {
+    const getCartItem = async () => {
+      const api_params = {
+        url: `${api.CartItems}?user_id=${user.user_id}`,
+        baseURL: BaseURL,
+        // isConsole: true,
+        // isConsoleParams: true,
+      };
+
+      const res = await httpRequest(api_params, setIsLoading);
+      if (res) {
+        dispatch(setCart(res.data.result));
+      }
+    };
+
+    if (user.user_id) {
+      getCartItem();
+    }
+  }, [dispatch, user.user_id]);
 
   const onReady = useCallback(async () => {
     try {
