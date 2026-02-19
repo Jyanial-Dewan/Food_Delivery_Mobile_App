@@ -99,9 +99,28 @@ const Cart = () => {
         )}
       />
 
-      <Text style={{color: theme.colors.surface, fontSize: 18, marginTop: 10}}>
-        Total: {total.toFixed(2)} Taka
-      </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 10,
+        }}>
+        <Text style={{color: theme.colors.surface, fontSize: 18}}>
+          Total: {total.toFixed(2)} Taka
+        </Text>
+        <TouchableOpacity
+          style={{
+            width: 200,
+            height: 40,
+            backgroundColor: theme.colors.primary,
+            borderRadius: 8,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{color: theme.colors.surface}}>Continue</Text>
+        </TouchableOpacity>
+      </View>
     </ContainerNew>
   );
 };
@@ -119,8 +138,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1, // 👈 add this
-    borderRadius: 99, // optional
+    borderWidth: 1,
+    borderRadius: 99,
     paddingHorizontal: 6,
     paddingVertical: 4,
     width: 100,

@@ -46,4 +46,6 @@ export interface IFoodItem {
   created_at: Date;
   updated_at: Date;
   image_urls: string[];
+  avg_rating: number;
+  review_count: number;
 }

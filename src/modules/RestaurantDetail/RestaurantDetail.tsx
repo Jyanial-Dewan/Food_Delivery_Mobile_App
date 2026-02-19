@@ -1,6 +1,6 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {IFoodItem} from '../../types/GeneralTypes';
 import {BaseURL} from '../../../App';
 import {httpRequest} from '../../common/constant/httpRequest';
@@ -12,11 +12,13 @@ import {ICartItem} from '../../types/CartTypes';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../../stores/Redux/Slices/CartSlice';
 import {RootState} from '../../stores/Redux/Store/Store';
+import {RootStackScreensParms} from '../../types/RootStactTypes';
 
 const RestaurantDetail = () => {
   const route = useRoute();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const navigation = useNavigation<RootStackScreensParms>();
   const user = useSelector((state: RootState) => state.user.user);
   const cart = useSelector((state: RootState) => state.cart.cart);
   const {restaurantId} = route.params as {restaurantId: number};
@@ -24,7 +26,7 @@ const RestaurantDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const cartIds = cart.map(item => item.food_id);
+  const cartIds = cart?.map(item => item.food_id);
 
   useEffect(() => {
     const loadFoodItems = async () => {
@@ -45,6 +47,12 @@ const RestaurantDetail = () => {
   const handleAddToCart = (item: ICartItem) => {
     dispatch(addToCart(item));
   };
+
+  const handleNavigate = (foodId: number) => {
+    navigation.navigate('SingleFoodItem', {
+      foodId: foodId,
+    });
+  };
   return (
     <ContainerNew style={styles.container}>
       <View>
@@ -52,16 +60,10 @@ const RestaurantDetail = () => {
           Popular Items
         </Text>
 
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: 10,
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}>
+        <View style={styles.foodItemsContainer}>
           {foodItems.map(item => (
             <View key={item.food_id} style={{width: '48%', gap: 6}}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => handleNavigate(item.food_id)}>
                 <Image
                   source={{uri: `${BaseURL}/${item.image_urls[0]}`}}
                   style={styles.imageStyle}
@@ -69,8 +71,7 @@ const RestaurantDetail = () => {
                 />
               </TouchableOpacity>
               <Text style={{color: theme.colors.surface}}>{item.name}</Text>
-              <View
-                style={{flexDirection: 'row', gap: 10, alignItems: 'center'}}>
+              <View style={styles.priceContainer}>
                 <Text style={{color: theme.colors.primary}}>
                   {item.discount_price} Taka
                 </Text>
@@ -83,13 +84,11 @@ const RestaurantDetail = () => {
                   {item.price} Taka
                 </Text>
                 <TouchableOpacity
-                  disabled={cartIds.includes(item.food_id)}
-                  style={{
-                    padding: 4,
-                    backgroundColor: 'white',
-                    borderRadius: 99,
-                    opacity: cartIds.includes(item.food_id) ? 0.2 : 1,
-                  }}
+                  disabled={cartIds?.includes(item.food_id)}
+                  style={[
+                    styles.cartButton,
+                    {opacity: cartIds?.includes(item.food_id) ? 0.5 : 1},
+                  ]}
                   onPress={() =>
                     handleAddToCart({
                       user_id: user.user_id,
@@ -130,5 +129,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 100,
     borderRadius: 8,
+  },
+
+  foodItemsContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+
+  priceContainer: {flexDirection: 'row', gap: 10, alignItems: 'center'},
+  cartButton: {
+    padding: 4,
+    backgroundColor: 'white',
+    borderRadius: 99,
   },
 });
