@@ -6,4 +6,6 @@ export const api = {
   Users: '/users',
   ProfileImage: '/api/profile_image',
   CartItems: '/api/cart_items',
+  FoodReview: '/api/food_item_reviews',
+  FoodItem: '/api/food_items',
 };

@@ -49,3 +49,12 @@ export interface IFoodItem {
   avg_rating: number;
   review_count: number;
 }
+
+export interface IFoodReview {
+  review_id: number;
+  food_id: number;
+  rating: number;
+  review: string;
+  created_at: Date;
+  user_id: number;
+}

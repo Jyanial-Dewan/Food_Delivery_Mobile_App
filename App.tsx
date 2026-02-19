@@ -19,13 +19,14 @@ import {secureStorage} from './src/utils/Storage/mmkv';
 import {Provider, useDispatch, useSelector} from 'react-redux';
 import {RootState, store} from './src/stores/Redux/Store/Store';
 import {Linking} from 'react-native';
-import {setToken} from './src/stores/Redux/Slices/UserSlice';
+import {setToken, setUsers} from './src/stores/Redux/Slices/UserSlice';
 import {COLORS} from './src/common/constant/Themes';
 import {setTheme} from './src/stores/Redux/Slices/ThemeSlice';
 import Alert from './src/common/components/Alert';
 import {httpRequest} from './src/common/constant/httpRequest';
 import {api} from './src/common/apis/api';
 import {setCart} from './src/stores/Redux/Slices/CartSlice';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
@@ -67,6 +68,8 @@ const customDarkTheme = {
     primary: COLORS.primary, //primary color green
     surface: COLORS.titleDarkPrimary, //text color
     secondary: COLORS.secondaryDarkButton, //secondaryDarkButton
+    blue: COLORS.blue,
+    amber: COLORS.amber,
   },
 };
 
@@ -126,6 +129,24 @@ const Main = () => {
     }
   }, [dispatch, user.user_id]);
 
+  useEffect(() => {
+    const getAllUsers = async () => {
+      const api_params = {
+        url: `${api.User}`,
+        baseURL: BaseURL,
+        // isConsole: true,
+        // isConsoleParams: true,
+      };
+
+      const res = await httpRequest(api_params, setIsLoading);
+      if (res) {
+        dispatch(setUsers(res.data.result));
+      }
+    };
+
+    getAllUsers();
+  }, [dispatch]);
+
   const onReady = useCallback(async () => {
     try {
       const uri = await Linking.getInitialURL();
@@ -168,7 +189,9 @@ const Main = () => {
 const App = () => {
   return (
     <Provider store={store}>
-      <Main />
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Main />
+      </GestureHandlerRootView>
     </Provider>
   );
 };
