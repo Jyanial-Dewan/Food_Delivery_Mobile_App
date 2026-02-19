@@ -13,6 +13,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../../stores/Redux/Slices/CartSlice';
 import {RootState} from '../../stores/Redux/Store/Store';
 import {RootStackScreensParms} from '../../types/RootStactTypes';
+import Spinner from '../../common/components/Spinner';
+import {api} from '../../common/apis/api';
 
 const RestaurantDetail = () => {
   const route = useRoute();
@@ -31,13 +33,14 @@ const RestaurantDetail = () => {
   useEffect(() => {
     const loadFoodItems = async () => {
       const api_params = {
-        url: `/api/food_items?user_id=${restaurantId}&page=${currentPage}&limit=5`,
+        url: `${api.FoodItem}?user_id=${restaurantId}&page=${currentPage}&limit=5`,
         baseURL: BaseURL,
         //   access_token: userInfo?.access_token,
         // isConsole: true,
         // isConsoleParams: true,
       };
       const res = await httpRequest(api_params, setIsLoading);
+      console.log(res.data.result, restaurantId, 'restaurant ID');
       setFoodItems(res.data.result);
     };
 
@@ -56,55 +59,62 @@ const RestaurantDetail = () => {
   return (
     <ContainerNew style={styles.container}>
       <View>
-        <Text style={{marginBottom: 10, color: theme.colors.surface}}>
+        <Text style={[styles.popularText, {color: theme.colors.surface}]}>
           Popular Items
         </Text>
 
-        <View style={styles.foodItemsContainer}>
-          {foodItems.map(item => (
-            <View key={item.food_id} style={{width: '48%', gap: 6}}>
-              <TouchableOpacity onPress={() => handleNavigate(item.food_id)}>
-                <Image
-                  source={{uri: `${BaseURL}/${item.image_urls[0]}`}}
-                  style={styles.imageStyle}
-                  resizeMode="stretch"
-                />
-              </TouchableOpacity>
-              <Text style={{color: theme.colors.surface}}>{item.name}</Text>
-              <View style={styles.priceContainer}>
-                <Text style={{color: theme.colors.primary}}>
-                  {item.discount_price} Taka
-                </Text>
-                <Text
-                  style={{
-                    color: theme.colors.surface,
-                    textDecorationLine: 'line-through',
-                    opacity: 0.6,
-                  }}>
-                  {item.price} Taka
-                </Text>
-                <TouchableOpacity
-                  disabled={cartIds?.includes(item.food_id)}
-                  style={[
-                    styles.cartButton,
-                    {opacity: cartIds?.includes(item.food_id) ? 0.5 : 1},
-                  ]}
-                  onPress={() =>
-                    handleAddToCart({
-                      user_id: user.user_id,
-                      food_id: item.food_id,
-                      quantity: 1,
-                      name: item.name,
-                      discount_price: item.discount_price as number,
-                      image_url: item.image_urls,
-                    })
-                  }>
-                  <AntDesign name="plus" size={20} color="black" />
+        {isLoading ? (
+          <View style={styles.spinnerContainer}>
+            <Spinner size={'large'} color={theme.colors.primary} />
+          </View>
+        ) : foodItems.length === 0 ? (
+          <Text style={{color: theme.colors.surface}}>No Result</Text>
+        ) : (
+          <View style={styles.foodItemsContainer}>
+            {foodItems.map(item => (
+              <View key={item.food_id} style={styles.foodItemContainer}>
+                <TouchableOpacity onPress={() => handleNavigate(item.food_id)}>
+                  <Image
+                    source={{uri: `${BaseURL}/${item.image_urls[0]}`}}
+                    style={styles.imageStyle}
+                    resizeMode="stretch"
+                  />
                 </TouchableOpacity>
+                <Text style={{color: theme.colors.surface}}>{item.name}</Text>
+                <View style={styles.priceContainer}>
+                  <Text style={{color: theme.colors.primary}}>
+                    {item.discount_price} Taka
+                  </Text>
+                  <Text
+                    style={[
+                      styles.lineThroughText,
+                      {color: theme.colors.surface},
+                    ]}>
+                    {item.price} Taka
+                  </Text>
+                  <TouchableOpacity
+                    disabled={cartIds?.includes(item.food_id)}
+                    style={[
+                      styles.cartButton,
+                      {opacity: cartIds?.includes(item.food_id) ? 0.5 : 1},
+                    ]}
+                    onPress={() =>
+                      handleAddToCart({
+                        user_id: user.user_id,
+                        food_id: item.food_id,
+                        quantity: 1,
+                        name: item.name,
+                        discount_price: item.discount_price as number,
+                        image_url: item.image_urls,
+                      })
+                    }>
+                    <AntDesign name="plus" size={20} color="black" />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
       </View>
     </ContainerNew>
   );
@@ -143,5 +153,16 @@ const styles = StyleSheet.create({
     padding: 4,
     backgroundColor: 'white',
     borderRadius: 99,
+  },
+  popularText: {
+    marginBottom: 10,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  spinnerContainer: {flex: 1, alignItems: 'center', justifyContent: 'center'},
+  foodItemContainer: {width: '48%', gap: 6},
+  lineThroughText: {
+    textDecorationLine: 'line-through',
+    opacity: 0.6,
   },
 });

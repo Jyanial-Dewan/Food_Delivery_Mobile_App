@@ -43,6 +43,7 @@ export interface UserState {
 interface UserSliceState {
   token: UserTokenState;
   user: UserState;
+  users: UserState[];
 }
 
 const initialState: UserSliceState = {
@@ -70,6 +71,7 @@ const initialState: UserSliceState = {
     profile_image_thumbnail: '',
     address: '',
   },
+  users: [],
 };
 
 export const userSlice = createSlice({
@@ -94,10 +96,15 @@ export const userSlice = createSlice({
     logout: state => {
       state.token = initialState.token;
       state.user = initialState.user;
+      state.users = initialState.users;
+    },
+    setUsers: (state, action: PayloadAction<UserState[]>) => {
+      state.users = action.payload;
     },
   },
 });
 
-export const {setToken, setUser, updateUser, logout} = userSlice.actions;
+export const {setToken, setUser, updateUser, logout, setUsers} =
+  userSlice.actions;
 
 export default userSlice.reducer;
