@@ -10,6 +10,7 @@ import {useTheme} from 'react-native-paper';
 import ForgotPassword from '../modules/ForgotPassword/ForgotPassword';
 import OTPVerify from '../modules/OTPVerify/OTPVerify';
 import CreateANewPassword from '../modules/CreateANewPassword/CreateANewPassword';
+import SingleFoodItem from '../modules/SingleFoodItem/SingleFoodItem';
 const {Navigator, Screen} = createNativeStackNavigator<RootStackScreensParms>();
 const RootStack = () => {
   const theme = useTheme();
@@ -31,6 +32,7 @@ const RootStack = () => {
       <Screen name="ForgotPassword" component={ForgotPassword} />
       <Screen name="OTPVerify" component={OTPVerify} />
       <Screen name="CreateANewPassword" component={CreateANewPassword} />
+      <Screen name="SingleFoodItem" component={SingleFoodItem} />
     </Navigator>
   );
 };

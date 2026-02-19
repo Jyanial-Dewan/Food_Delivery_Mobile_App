@@ -1,6 +1,5 @@
-declare module 'react-native-vector-icons/MaterialCommunityIcons' {
-  import {ComponentType} from 'react';
-  import {TextProps} from 'react-native';
+declare module 'react-native-vector-icons/*' {
+  import * as React from 'react';
 
   export interface IconProps extends TextProps {
     name: string;
@@ -8,6 +7,9 @@ declare module 'react-native-vector-icons/MaterialCommunityIcons' {
     color?: string;
   }
 
-  const MaterialCommunityIcons: ComponentType<IconProps>;
-  export default MaterialCommunityIcons;
+  const Icon: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<any>
+  >;
+
+  export default Icon;
 }

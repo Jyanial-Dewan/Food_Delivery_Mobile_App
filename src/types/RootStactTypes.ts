@@ -10,4 +10,5 @@ export type RootStackScreensParms = {
   SignUpScreen: undefined;
   OTPVerify: undefined;
   CreateANewPassword: undefined;
+  SingleFoodItem: {foodId: number};
 };
