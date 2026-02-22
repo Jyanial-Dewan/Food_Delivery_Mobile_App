@@ -3,6 +3,7 @@ const withoutEncryptionApi = [
   api.AuthAppsLogin,
   api.UserUpdate,
   api.FoodReview,
+  api.UsersCreate,
   // api.Users,
   // api.ProfileImage
 ];
