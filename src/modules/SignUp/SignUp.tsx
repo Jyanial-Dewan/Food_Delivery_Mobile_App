@@ -52,7 +52,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
   // console.log(formattedValue, 'formattedValue');
   const onSubmit = async (data: ISignUpPayloadType) => {
     // console.log(data, 'data');
-    const loginPayload = {
+    const signupPayload = {
       username: data?.username?.trim(),
       user_type: data?.user_type?.trim(),
       email: data?.email?.trim(),
@@ -64,7 +64,7 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
 
     const api_params = {
       url: api.UsersCreate,
-      data: loginPayload,
+      data: signupPayload,
       method: 'POST' as httpMethod,
       baseURL: BaseURL,
       // isConsole: true,
@@ -86,8 +86,8 @@ const SignUp = ({navigation}: SignUpScreenProps) => {
 
   const options = [
     {label: 'User', value: 'USER'},
-    {label: 'Restaurant', value: 'RESTAURANT'},
-    {label: 'Delivery', value: 'DELIVERY'},
+    {label: 'Restaurant', value: 'OWNER'},
+    {label: 'Delivery Man', value: 'DELIVERY'},
   ];
   return (
     <Container

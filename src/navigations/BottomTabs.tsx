@@ -83,7 +83,7 @@ const BottomTabs = () => {
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <Icon
-              name="heart"
+              name="barcode-scan"
               size={26}
               color={focused ? COLORS.green : 'gray'}
             />
