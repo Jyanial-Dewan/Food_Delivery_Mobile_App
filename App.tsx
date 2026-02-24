@@ -27,6 +27,7 @@ import {httpRequest} from './src/common/constant/httpRequest';
 import {api} from './src/common/apis/api';
 import {setCart} from './src/stores/Redux/Slices/CartSlice';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SocketContextProvider} from './src/context/SocketContext';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
@@ -189,9 +190,11 @@ const Main = () => {
 const App = () => {
   return (
     <Provider store={store}>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <Main />
-      </GestureHandlerRootView>
+      <SocketContextProvider>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <Main />
+        </GestureHandlerRootView>
+      </SocketContextProvider>
     </Provider>
   );
 };
