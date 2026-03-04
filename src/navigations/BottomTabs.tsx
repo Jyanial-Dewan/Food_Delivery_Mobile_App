@@ -63,7 +63,7 @@ const BottomTabs = () => {
         options={{
           tabBarLabel: 'Cart',
           tabBarLabelStyle: {display: 'none'},
-          tabBarBadge: cart.length,
+          tabBarBadge: cart?.length,
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <Icon

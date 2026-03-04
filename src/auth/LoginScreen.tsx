@@ -90,8 +90,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
       const user_api_params = {
         url: `${api.User}?user_id=${res.data.user_id}`,
         baseURL: BaseURL,
-        // isConsole: true,
-        // isConsoleParams: true,
+        isConsole: true,
+        isConsoleParams: true,
       };
       const user_res = await httpRequest(user_api_params, setIsLoading);
       console.log(user_res, 'user res');

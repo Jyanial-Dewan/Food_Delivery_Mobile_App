@@ -4,7 +4,10 @@ const withoutEncryptionApi = [
   api.UserUpdate,
   api.FoodReview,
   api.UsersCreate,
-  // api.Users,
+  api.Users,
+  api.Orders,
+  api.OrderItems,
+  api.CartItems,
   // api.ProfileImage
 ];
 

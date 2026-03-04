@@ -8,4 +8,7 @@ export const api = {
   CartItems: '/api/cart_items',
   FoodReview: '/api/food_item_reviews',
   FoodItem: '/api/food_items',
+  OrderStatuses: '/api/order_statuses',
+  Orders: '/api/orders',
+  OrderItems: '/api/order_items',
 };

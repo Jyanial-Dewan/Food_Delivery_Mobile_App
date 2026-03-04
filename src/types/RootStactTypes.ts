@@ -11,4 +11,5 @@ export type RootStackScreensParms = {
   OTPVerify: undefined;
   CreateANewPassword: undefined;
   SingleFoodItem: {foodId: number};
+  PlaceOrder: undefined;
 };

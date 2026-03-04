@@ -1,0 +1,80 @@
+﻿alues.xml:1483: 
+error: style 
+attribute 
+'attr/bootSplashLogo 
+(aka com.food_delivery
+_mobile_app:attr/bootS
+plashLogo)' not found.
+     com.food_delivery
+_mobile_app-mergeDebug
+Resources-24:/values/v
+alues.xml:1484: 
+error: style 
+attribute 'attr/postBo
+otSplashTheme (aka com
+.food_delivery_mobile_
+app:attr/postBootSplas
+hTheme)' not found.
+     error: resource s
+tyle/Theme.BootSplash 
+(aka com.food_delivery
+_mobile_app:style/Them
+e.BootSplash) not 
+found.
+     com.food_delivery
+_mobile_app-mergeDebug
+Resources-24:/values-n
+ight-v8/values-night-v
+8.xml:10: error: 
+style attribute 'attr/
+bootSplashBackground 
+(aka com.food_delivery
+_mobile_app:attr/bootS
+plashBackground)' not 
+found.
+     com.food_delivery
+_mobile_app-mergeDebug
+Resources-24:/values-n
+ight-v8/values-night-v
+8.xml:11: error: 
+style attribute 
+'attr/bootSplashLogo 
+(aka com.food_delivery
+_mobile_app:attr/bootS
+plashLogo)' not found.
+     com.food_delivery
+_mobile_app-mergeDebug
+Resources-24:/values-n
+ight-v8/values-night-v
+8.xml:12: error: 
+style attribute 'attr/
+postBootSplashTheme 
+(aka com.food_delivery
+_mobile_app:attr/postB
+ootSplashTheme)' not 
+found.
+     error: failed 
+linking references.
+
+
+* Try:
+> Run with 
+--stacktrace option 
+to get the stack 
+trace.
+> Run with --info or 
+--debug option to get 
+more log output.
+> Run with --scan to 
+get full insights.
+> Get more help at htt
+ps://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 51s
+145 actionable tasks: 12 executed, 133 up-to-date

@@ -3,10 +3,12 @@ import {ICartItem} from '../../../types/CartTypes';
 
 interface CartSliceState {
   cart: ICartItem[];
+  cartReloadController: number;
 }
 
 const initialState: CartSliceState = {
   cart: [],
+  cartReloadController: 0,
 };
 
 export const cartSlice = createSlice({
@@ -51,6 +53,10 @@ export const cartSlice = createSlice({
 
       state.cart.push(action.payload);
     },
+
+    changeCardReloadController: state => {
+      state.cartReloadController++;
+    },
   },
 });
 
@@ -60,6 +66,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   addToCart,
+  changeCardReloadController,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

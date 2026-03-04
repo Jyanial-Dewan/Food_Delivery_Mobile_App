@@ -13,11 +13,14 @@ import {
   removeItem,
 } from '../../stores/Redux/Slices/CartSlice';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackScreensParms} from '../../types/RootStactTypes';
 
 const Cart = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const cart = useSelector((state: RootState) => state.cart.cart);
+  const navigation = useNavigation<RootStackScreensParms>();
+  const {cart} = useSelector((state: RootState) => state.cart);
 
   const handleIncreaseQuantity = (foodId: number) => {
     dispatch(increaseQuantity(foodId));
@@ -34,6 +37,10 @@ const Cart = () => {
   const total = cart.reduce((sum, item) => {
     return sum + item.discount_price * item.quantity;
   }, 0);
+
+  const handleNavigate = () => {
+    navigation.navigate('PlaceOrder');
+  };
 
   return (
     <ContainerNew
@@ -99,25 +106,16 @@ const Cart = () => {
         )}
       />
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 10,
-        }}>
+      <View style={styles.footerContainer}>
         <Text style={{color: theme.colors.surface, fontSize: 18}}>
           Total: {total.toFixed(2)} Taka
         </Text>
         <TouchableOpacity
-          style={{
-            width: 200,
-            height: 40,
-            backgroundColor: theme.colors.primary,
-            borderRadius: 8,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          onPress={handleNavigate}
+          style={[
+            styles.continueButton,
+            {backgroundColor: theme.colors.primary},
+          ]}>
           <Text style={{color: theme.colors.surface}}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -125,6 +123,7 @@ const Cart = () => {
   );
 };
 export default Cart;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -149,5 +148,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 10,
     justifyContent: 'space-between',
+  },
+  continueButton: {
+    width: 200,
+    height: 40,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
 });

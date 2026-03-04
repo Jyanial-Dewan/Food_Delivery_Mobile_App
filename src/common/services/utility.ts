@@ -13,3 +13,9 @@ export const renderUserName = (id: number, users: UserState[]) => {
 
   return user?.username;
 };
+
+export const convertDate = (isoDateString: Date) => {
+  const date = new Date(isoDateString);
+  const formattedDate = date.toLocaleString();
+  return formattedDate;
+};
