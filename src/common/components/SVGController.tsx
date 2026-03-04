@@ -2,8 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import React, {Fragment} from 'react';
 import {COLORS} from '../constant/Themes';
 import BellIcon from '../../assets/Icons/bell.svg';
-import UserIcon from '../../assets/Icons/user.svg';
-import SettingIcon from '../../assets/Icons/settings.svg';
+import HomeIcon from '../../assets/Icons/house.svg';
 
 interface SVGControllerProps {
   name: string;
@@ -16,7 +15,7 @@ const SVGController = ({
   name,
   height = 24,
   width = 24,
-  color = COLORS.newGray,
+  color = COLORS.black,
 }: SVGControllerProps) => {
   const getSVGImage = (
     svgName: string,
@@ -27,10 +26,8 @@ const SVGController = ({
     switch (svgName) {
       case 'Bell':
         return <BellIcon width={width} height={height} color={color} />;
-      case 'User':
-        return <UserIcon width={width} height={height} color={color} />;
-      case 'Settings':
-        return <SettingIcon width={width} height={height} color={color} />;
+      case 'Home':
+        return <HomeIcon width={width} height={height} color={color} />;
       default:
         return <BellIcon width={width} height={height} color={color} />;
     }

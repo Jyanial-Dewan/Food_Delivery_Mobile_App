@@ -4,7 +4,7 @@ import {useTheme} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {COLORS} from '../../common/constant/Themes';
 import {IFoodReview} from '../../types/GeneralTypes';
-import {Rating} from 'react-native-vector-rating';
+// import {StarRatingDisplay} from 'react-native-star-rating-widget';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../stores/Redux/Store/Store';
 import {renderUserName} from '../../common/services/utility';
@@ -64,14 +64,7 @@ const Review = ({reviews, handleOpenBottomSheet}: Props) => {
                 {renderUserName(item.user_id, users)}
               </Text>
 
-              <Rating
-                icon={<AntDesign name="star" />}
-                color={COLORS.amber}
-                emptyColor="silver"
-                defaultValue={item.rating}
-                count={10}
-                size={16}
-              />
+              {/* <StarRatingDisplay rating={item.rating} maxStars={10} /> */}
             </View>
 
             {item.review && (

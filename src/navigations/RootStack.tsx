@@ -11,6 +11,7 @@ import ForgotPassword from '../modules/ForgotPassword/ForgotPassword';
 import OTPVerify from '../modules/OTPVerify/OTPVerify';
 import CreateANewPassword from '../modules/CreateANewPassword/CreateANewPassword';
 import SingleFoodItem from '../modules/SingleFoodItem/SingleFoodItem';
+import PlaceOrder from '../modules/PlaceOrder/PlaceOrder';
 const {Navigator, Screen} = createNativeStackNavigator<RootStackScreensParms>();
 const RootStack = () => {
   const theme = useTheme();
@@ -33,6 +34,7 @@ const RootStack = () => {
       <Screen name="OTPVerify" component={OTPVerify} />
       <Screen name="CreateANewPassword" component={CreateANewPassword} />
       <Screen name="SingleFoodItem" component={SingleFoodItem} />
+      <Screen name="PlaceOrder" component={PlaceOrder} />
     </Navigator>
   );
 };

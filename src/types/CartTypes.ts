@@ -1,6 +1,7 @@
 export interface ICartItem {
   user_id: number;
   food_id: number;
+  vendor_id: number;
   quantity: number;
   name: string;
   discount_price: number;

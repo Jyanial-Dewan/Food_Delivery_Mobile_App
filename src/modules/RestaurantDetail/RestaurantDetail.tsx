@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {IFoodItem} from '../../types/GeneralTypes';
 import {BaseURL} from '../../../App';
-import {httpRequest} from '../../common/constant/httpRequest';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import ContainerNew from '../../common/components/Container';
 import {Image} from 'react-native';
 import {useTheme} from 'react-native-paper';
@@ -15,6 +15,7 @@ import {RootState} from '../../stores/Redux/Store/Store';
 import {RootStackScreensParms} from '../../types/RootStactTypes';
 import Spinner from '../../common/components/Spinner';
 import {api} from '../../common/apis/api';
+import {useToast} from '../../common/components/CustomToast';
 
 const RestaurantDetail = () => {
   const route = useRoute();
@@ -23,9 +24,11 @@ const RestaurantDetail = () => {
   const navigation = useNavigation<RootStackScreensParms>();
   const user = useSelector((state: RootState) => state.user.user);
   const cart = useSelector((state: RootState) => state.cart.cart);
+  const toaster = useToast();
   const {restaurantId} = route.params as {restaurantId: number};
   const [foodItems, setFoodItems] = useState<IFoodItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const cartIds = cart?.map(item => item.food_id);
@@ -47,8 +50,21 @@ const RestaurantDetail = () => {
     loadFoodItems();
   }, [currentPage, restaurantId]);
 
-  const handleAddToCart = (item: ICartItem) => {
-    dispatch(addToCart(item));
+  const handleAddToCart = async (item: ICartItem) => {
+    const params = {
+      url: api.CartItems,
+      data: item,
+      method: 'POST' as httpMethod,
+      baseURL: BaseURL,
+      // isConsole: true,
+      // isConsoleParams: true,
+    };
+
+    const res = await httpRequest(params, setIsLoading);
+    if (res.status === 201) {
+      dispatch(addToCart(item));
+      toaster.show({message: res?.data?.message, type: 'success'});
+    }
   };
 
   const handleNavigate = (foodId: number) => {
@@ -102,6 +118,7 @@ const RestaurantDetail = () => {
                       handleAddToCart({
                         user_id: user.user_id,
                         food_id: item.food_id,
+                        vendor_id: item.user_id,
                         quantity: 1,
                         name: item.name,
                         discount_price: item.discount_price as number,

@@ -3,6 +3,7 @@ import {HydrateSlice} from '../Slices/HydrateSlice';
 import {ThemeSlice} from '../Slices/ThemeSlice';
 import {userSlice} from '../Slices/UserSlice';
 import {cartSlice} from '../Slices/CartSlice';
+import {orderSlice} from '../Slices/OrderSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     user: userSlice.reducer,
     theme: ThemeSlice.reducer,
     cart: cartSlice.reducer,
+    order: orderSlice.reducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

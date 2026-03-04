@@ -90,17 +90,30 @@ const SingleFoodItem = () => {
     setActiveIndex(index);
   };
 
-  const handleAddToCart = () => {
-    dispatch(
-      addToCart({
-        user_id: user.user_id,
-        food_id: foodItem?.food_id as number,
-        quantity: 1,
-        name: foodItem?.name as string,
-        discount_price: foodItem?.discount_price as number,
-        image_url: foodItem?.image_urls as string[],
-      }),
-    );
+  const handleAddToCart = async () => {
+    const payload = {
+      user_id: user.user_id,
+      food_id: foodItem?.food_id as number,
+      vendor_id: foodItem?.user_id as number,
+      quantity: 1,
+      name: foodItem?.name as string,
+      discount_price: foodItem?.discount_price as number,
+      image_url: foodItem?.image_urls as string[],
+    };
+    const params = {
+      url: api.CartItems,
+      data: payload,
+      method: 'POST' as httpMethod,
+      baseURL: BaseURL,
+      // isConsole: true,
+      // isConsoleParams: true,
+    };
+
+    const res = await httpRequest(params, setIsLoading);
+
+    if (res.status === 201) {
+      dispatch(addToCart(payload));
+    }
   };
 
   const sheetRef = useRef<BottomSheet>(null);

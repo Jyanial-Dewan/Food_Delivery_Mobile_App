@@ -4,12 +4,17 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react';
 import {io, Socket} from 'socket.io-client';
 import {BaseURL} from '../../App';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../stores/Redux/Store/Store';
 import {useNetInfo} from '@react-native-community/netinfo';
+import {api} from '../common/apis/api';
+import {httpRequest} from '../common/constant/httpRequest';
+import {setOrders, setStatuses} from '../stores/Redux/Slices/OrderSlice';
+import {IOrder} from '../types/OrderTypes';
 
 interface SocketContextProps {
   children: ReactNode;
@@ -17,6 +22,8 @@ interface SocketContextProps {
 
 export interface SocketContextType {
   socket: Socket;
+  emitUpdateStatus: (orderId: number) => void;
+  emitAddOrder: (orderId: number) => void;
 }
 
 const SocketContext = createContext({} as SocketContextType);
@@ -26,8 +33,11 @@ export function useSocketContext() {
 }
 
 export function SocketContextProvider({children}: SocketContextProps) {
-  const userId = useSelector((state: RootState) => state.user.user.user_id);
+  const userId = useSelector((state: RootState) => state.user.user?.user_id);
+  const {orders} = useSelector((state: RootState) => state.order);
   const hasInternet = useNetInfo().isConnected;
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const socket = useMemo(() => {
     // console.log(username, 'socket');
     // return io('wss://procg.datafluent.team', {
@@ -52,8 +62,67 @@ export function SocketContextProvider({children}: SocketContextProps) {
       console.log('Connected to WebSocket', socket.id, userId);
     });
   });
+  //Load statuses
+  useEffect(() => {
+    const getStatuses = async () => {
+      const api_params = {
+        url: `${api.OrderStatuses}?vendor_id=${userId}`,
+        baseURL: BaseURL,
+        // isConsole: true,
+        // isConsoleParams: true,
+      };
+
+      const res = await httpRequest(api_params, setIsLoading);
+      if (res) {
+        dispatch(setStatuses(res.data.result.status_names));
+      }
+    };
+
+    getStatuses();
+  }, [dispatch, userId]);
+
+  //Load Orders
+  useEffect(() => {
+    const getOrders = async () => {
+      const api_params = {
+        url: `${api.Orders}?vendor_id=${userId}`,
+        baseURL: BaseURL,
+        // isConsole: true,
+        // isConsoleParams: true,
+      };
+
+      const res = await httpRequest(api_params, setIsLoading);
+      if (res) {
+        dispatch(setOrders(res.data.result));
+      }
+    };
+
+    getOrders();
+  }, [dispatch, userId]);
+
+  //Listen to Socket Events
+  useEffect(() => {
+    socket.on('updateStatus', (order: IOrder) => {
+      const newOrders = orders.filter(o => o.order_id !== order.order_id);
+      dispatch(setOrders([...newOrders, order]));
+    });
+
+    return () => {
+      socket.off('updateStatus');
+    };
+  }, [dispatch, orders, socket]);
+
+  const emitUpdateStatus = (orderId: number) => {
+    socket.emit('updateStatus', {order_id: orderId});
+  };
+
+  const emitAddOrder = (orderId: number) => {
+    socket.emit('addOrder', {order_id: orderId});
+  };
 
   return (
-    <SocketContext.Provider value={{socket}}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{socket, emitUpdateStatus, emitAddOrder}}>
+      {children}
+    </SocketContext.Provider>
   );
 }

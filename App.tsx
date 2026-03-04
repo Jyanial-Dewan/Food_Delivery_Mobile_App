@@ -93,6 +93,7 @@ const Main = () => {
   const selectedTheme = useSelector((state: RootState) => state.theme.theme);
   const user = useSelector((state: RootState) => state.user.user);
   const [isLoading, setIsLoading] = useState(false);
+  const {cartReloadController} = useSelector((state: RootState) => state.cart);
 
   useEffect(() => {
     if (!selectedTheme) {
@@ -125,10 +126,10 @@ const Main = () => {
       }
     };
 
-    if (user.user_id) {
+    if (user?.user_id) {
       getCartItem();
     }
-  }, [dispatch, user.user_id]);
+  }, [dispatch, user?.user_id, cartReloadController]);
 
   useEffect(() => {
     const getAllUsers = async () => {

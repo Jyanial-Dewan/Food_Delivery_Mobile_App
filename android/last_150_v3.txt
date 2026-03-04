@@ -1,0 +1,150 @@
+﻿-Xlint:deprecation 
+for details.
+
+> Task :react-native-safe-area-context:bundleLibCompileToJarDebug
+> Task :react-native-screens:compileDebugJavaWithJavac
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :notifee_react-native:mergeDebugShaders UP-TO-DATE
+> Task :react-native-vision-camera:javaPreCompileDebug
+> Task :notifee_react-native:compileDebugShaders NO-SOURCE
+> Task :react-native-screens:bundleLibCompileToJarDebug
+> Task :react-native-vision-camera:compileDebugJavaWithJavac
+> Task :notifee_react-native:generateDebugAssets UP-TO-DATE
+> Task :notifee_react-native:packageDebugAssets UP-TO-DATE
+> Task :react-native-bootsplash:mergeDebugShaders UP-TO-DATE
+> Task :react-native-bootsplash:compileDebugShaders NO-SOURCE
+> Task :react-native-bootsplash:generateDebugAssets UP-TO-DATE
+> Task :react-native-bootsplash:packageDebugAssets UP-TO-DATE
+> Task :react-native-community_netinfo:mergeDebugShaders UP-TO-DATE
+> Task :react-native-community_netinfo:compileDebugShaders NO-SOURCE
+> Task :react-native-community_netinfo:generateDebugAssets UP-TO-DATE
+> Task :react-native-community_netinfo:packageDebugAssets UP-TO-DATE
+> Task :react-native-firebase_app:mergeDebugShaders UP-TO-DATE
+> Task :react-native-firebase_app:compileDebugShaders NO-SOURCE
+> Task :react-native-firebase_app:generateDebugAssets UP-TO-DATE
+> Task :react-native-firebase_app:packageDebugAssets UP-TO-DATE
+> Task :react-native-firebase_messaging:mergeDebugShaders UP-TO-DATE
+> Task :react-native-firebase_messaging:compileDebugShaders NO-SOURCE
+> Task :react-native-firebase_messaging:generateDebugAssets UP-TO-DATE
+> Task :react-native-firebase_messaging:packageDebugAssets UP-TO-DATE
+> Task :react-native-gesture-handler:mergeDebugShaders
+> Task :react-native-gesture-handler:compileDebugShaders NO-SOURCE
+> Task :react-native-gesture-handler:generateDebugAssets UP-TO-DATE
+> Task :react-native-gesture-handler:packageDebugAssets
+> Task :react-native-image-crop-picker:mergeDebugShaders
+> Task :react-native-image-crop-picker:compileDebugShaders NO-SOURCE
+> Task :react-native-image-crop-picker:generateDebugAssets UP-TO-DATE
+> Task :react-native-image-crop-picker:packageDebugAssets
+> Task :react-native-keychain:mergeDebugShaders
+> Task :react-native-keychain:compileDebugShaders NO-SOURCE
+> Task :react-native-keychain:generateDebugAssets UP-TO-DATE
+> Task :react-native-keychain:packageDebugAssets
+> Task :react-native-mmkv:mergeDebugShaders
+> Task :react-native-mmkv:compileDebugShaders NO-SOURCE
+> Task :react-native-mmkv:generateDebugAssets UP-TO-DATE
+> Task :react-native-mmkv:packageDebugAssets
+> Task :react-native-permissions:mergeDebugShaders
+> Task :react-native-permissions:compileDebugShaders NO-SOURCE
+> Task :react-native-permissions:generateDebugAssets UP-TO-DATE
+> Task :react-native-permissions:packageDebugAssets
+> Task :react-native-reanimated:mergeDebugShaders
+> Task :react-native-reanimated:compileDebugShaders NO-SOURCE
+> Task :react-native-reanimated:generateDebugAssets UP-TO-DATE
+> Task :react-native-reanimated:packageDebugAssets
+> Task :react-native-safe-area-context:mergeDebugShaders
+> Task :react-native-safe-area-context:compileDebugShaders NO-SOURCE
+> Task :react-native-safe-area-context:generateDebugAssets UP-TO-DATE
+> Task :react-native-safe-area-context:packageDebugAssets
+> Task :react-native-screens:mergeDebugShaders
+> Task :react-native-screens:compileDebugShaders NO-SOURCE
+> Task :react-native-screens:generateDebugAssets UP-TO-DATE
+> Task :react-native-screens:packageDebugAssets
+> Task :react-native-vision-camera:bundleLibCompileToJarDebug
+> Task :react-native-vector-icons:mergeDebugShaders
+> Task :react-native-vector-icons:compileDebugShaders NO-SOURCE
+> Task :react-native-vector-icons:generateDebugAssets UP-TO-DATE
+> Task :react-native-vector-icons:packageDebugAssets
+> Task :react-native-vision-camera:mergeDebugShaders
+> Task :react-native-vision-camera:compileDebugShaders NO-SOURCE
+> Task :react-native-vision-camera:generateDebugAssets UP-TO-DATE
+> Task :react-native-vision-camera:packageDebugAssets
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :react-native-bootsplash:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :react-native-firebase_messaging:bundleLibRuntimeToJarDebug
+> Task :react-native-community_netinfo:bundleLibRuntimeToJarDebug
+> Task :notifee_react-native:bundleLibRuntimeToJarDebug
+> Task :react-native-firebase_app:bundleLibRuntimeToJarDebug
+> Task :react-native-image-crop-picker:bundleLibRuntimeToJarDebug
+> Task :react-native-reanimated:bundleLibRuntimeToJarDebug
+> Task :react-native-gesture-handler:bundleLibRuntimeToJarDebug
+> Task :react-native-keychain:bundleLibRuntimeToJarDebug
+> Task :react-native-mmkv:bundleLibRuntimeToJarDebug
+> Task :react-native-permissions:bundleLibRuntimeToJarDebug
+> Task :react-native-safe-area-context:bundleLibRuntimeToJarDebug
+> Task :react-native-screens:bundleLibRuntimeToJarDebug
+> Task :react-native-vector-icons:bundleLibRuntimeToJarDebug
+e: file:///C:/Work/Rea
+ct-Native/Food_Deliver
+y_Mobile_App/android/a
+pp/src/main/java/com/f
+ood_delivery_mobile_ap
+p/MainApplication.kt:1
+2:27 Unresolved 
+reference: flipper
+e: file:///C:/Work/Rea
+ct-Native/Food_Deliver
+y_Mobile_App/android/a
+pp/src/main/java/com/f
+ood_delivery_mobile_ap
+p/MainApplication.kt:4
+3:5 Unresolved 
+reference: 
+ReactNativeFlipper
+
+> Task :app:compileDebugKotlin FAILED
+
+> Task :react-native-vision-camera:bundleLibRuntimeToJarDebug
+
+FAILURE: Build failed 
+with an exception.
+
+* What went wrong:
+Execution failed for 
+task ':app:compileDebu
+gKotlin'.
+> A failure occurred 
+while executing org.je
+tbrains.kotlin.compile
+rRunner.GradleCompiler
+RunnerWithWorkers$Grad
+leKotlinCompilerWorkAc
+tion
+   > Compilation 
+error. See log for 
+more details
+
+* Try:
+> Run with 
+--stacktrace option 
+to get the stack 
+trace.
+> Run with --info or 
+--debug option to get 
+more log output.
+> Run with --scan to 
+get full insights.
+> Get more help at htt
+ps://help.gradle.org.
+
+BUILD FAILED in 3m 26s
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+258 actionable tasks: 182 executed, 76 up-to-date

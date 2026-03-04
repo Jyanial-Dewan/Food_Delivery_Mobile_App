@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   ImageBackground,
+  PermissionsAndroid,
   StyleSheet,
   Text,
   TextInput,
@@ -17,6 +19,7 @@ import ImageFlatList from './ImageFlatList';
 import RestaurantList from './RestaurantList';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../stores/Redux/Store/Store';
+import messaging from '@react-native-firebase/messaging';
 
 const Home = () => {
   const theme = useTheme();
@@ -24,13 +27,45 @@ const Home = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const [search, setSearch] = useState('');
 
+  //Post_Notification Permission
+  useEffect(() => {
+    const requenstPermissionAndroid = async () => {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        const token = await messaging().getToken();
+        // fcmTokenSave({fcmToken: token});
+        console.log('FCM Token:', token);
+        // getFCMToken();
+
+        // const tokenPayload = {
+        //   token: token,
+        //   username: userInfo?.user_name,
+        // };
+        // const tokenParams = {
+        //   url: api.RegisterToken,
+        //   data: tokenPayload,
+        //   method: 'post',
+        //   baseURL: url,
+        //   isConsole: true,
+        //   isConsoleParams: true,
+        // };
+        // await httpRequest(tokenParams, setIsLoading);
+      } else {
+        Alert.alert('Permission Denied');
+      }
+    };
+    requenstPermissionAndroid();
+  }, []);
+
   return (
     <ContainerNew style={styles.container} isScrollView={true}>
       <View style={styles.headerContainer}>
         <View style={{gap: 8}}>
           <Text
             style={[styles.text, {color: theme.colors.surface, fontSize: 14}]}>
-            Hi, {user.username ?? ''}
+            Hi, {user?.username ?? ''}
           </Text>
           <Text
             style={[styles.text, {color: theme.colors.surface, fontSize: 16}]}>

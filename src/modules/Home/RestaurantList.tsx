@@ -47,7 +47,7 @@ const RestaurantList = () => {
     <View>
       <Text style={{marginBottom: 10}}>Restaurant List</Text>
       <View>
-        {restaurants.map(restaurant => (
+        {restaurants?.map(restaurant => (
           <TouchableOpacity
             style={styles.boxStyle}
             onPress={() => handlePress(restaurant.user_id)}
