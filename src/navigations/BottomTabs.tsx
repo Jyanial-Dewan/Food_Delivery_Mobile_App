@@ -10,10 +10,13 @@ import Scanner from '../modules/Scanner/Scanner';
 import HomeStack from './HomeStack';
 import {useSelector} from 'react-redux';
 import {RootState} from '../stores/Redux/Store/Store';
+import Dashboard from '../modules/Dashboard/Dashboard';
 
 const {Navigator, Screen} = createBottomTabNavigator();
 const BottomTabs = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
+  const {user} = useSelector((state: RootState) => state.user);
+  const {deliveryRequests} = useSelector((state: RootState) => state.order);
   const theme = useTheme();
   return (
     <Navigator
@@ -57,23 +60,43 @@ const BottomTabs = () => {
           ),
         }}
       />
-      <Screen
-        name="Cart"
-        component={Cart}
-        options={{
-          tabBarLabel: 'Cart',
-          tabBarLabelStyle: {display: 'none'},
-          tabBarBadge: cart?.length,
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <Icon
-              name="cart"
-              size={26}
-              color={focused ? COLORS.green : 'gray'}
-            />
-          ),
-        }}
-      />
+      {user.user_type === 'USER' ? (
+        <Screen
+          name="Cart"
+          component={Cart}
+          options={{
+            tabBarLabel: 'Cart',
+            tabBarLabelStyle: {display: 'none'},
+            tabBarBadge: cart?.length,
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Icon
+                name="cart"
+                size={26}
+                color={focused ? COLORS.green : 'gray'}
+              />
+            ),
+          }}
+        />
+      ) : (
+        <Screen
+          name="DashBoard"
+          component={Dashboard}
+          options={{
+            tabBarLabel: 'Dash Board',
+            tabBarLabelStyle: {display: 'none'},
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Icon
+                name="cart"
+                size={26}
+                color={focused ? COLORS.green : 'gray'}
+              />
+            ),
+          }}
+        />
+      )}
+
       <Screen
         name="Favorite"
         component={Scanner}
@@ -95,6 +118,7 @@ const BottomTabs = () => {
         component={Notification}
         options={{
           tabBarLabel: 'Notification',
+          tabBarBadge: deliveryRequests?.length,
           tabBarLabelStyle: {display: 'none'},
           headerShown: false,
           tabBarIcon: ({focused}) => (

@@ -9,27 +9,29 @@ import Modal from './Modal';
 
 const Dashboard = () => {
   const theme = useTheme();
-  const {orders, statuses} = useSelector((state: RootState) => state.order);
+  const {orders} = useSelector((state: RootState) => state.order);
   const [showModal, setShowModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<IOrder | undefined>(
     undefined,
   );
   const [status, setStatus] = useState('');
-  const ordersByStatus = orders.reduce<Record<string, IOrder[]>>(
-    (acc, order) => {
-      if (!acc[order.status_code]) {
-        acc[order.status_code] = [];
-      }
-      acc[order.status_code].push(order);
-      return acc;
-    },
-    {},
-  );
+  const groupedStatuses = Object.values(
+    orders.reduce<Record<string, {status_code: string; orders: IOrder[]}>>(
+      (acc, order) => {
+        if (!acc[order.status_code]) {
+          acc[order.status_code] = {
+            status_code: order.status_code,
+            orders: [],
+          };
+        }
 
-  const groupedStatuses = statuses.map(status => ({
-    ...status,
-    orders: ordersByStatus[status.code] || [],
-  }));
+        acc[order.status_code].orders.push(order);
+
+        return acc;
+      },
+      {},
+    ),
+  );
 
   const handleOrderPress = (order: IOrder) => {
     setStatus(order.status_code);
@@ -39,24 +41,35 @@ const Dashboard = () => {
   return (
     <ContainerNew
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
-      {groupedStatuses.map(s => (
-        <View
-          key={s.code}
-          style={[styles.statusBox, {backgroundColor: s.color}]}>
-          <Text style={styles.text}>{s.label}</Text>
-          <View style={styles.separator} />
-          <View style={styles.orderContainer}>
-            {s.orders.map(o => (
-              <TouchableOpacity
-                onPress={() => handleOrderPress(o)}
-                key={o.order_id}
-                style={styles.orderBox}>
-                <Text style={styles.orderText}>Order Id: {o.order_id}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      ))}
+      {groupedStatuses.map(
+        s =>
+          s.orders.length > 0 && (
+            <View
+              key={s.status_code}
+              style={[
+                styles.statusBox,
+                {backgroundColor: theme.colors.onBackground},
+              ]}>
+              <Text style={[styles.text, {color: theme.colors.surface}]}>
+                {s.status_code} ({s.orders.length})
+              </Text>
+              <View style={styles.separator} />
+              <View style={styles.orderContainer}>
+                {s.orders.map(o => (
+                  <TouchableOpacity
+                    onPress={() => handleOrderPress(o)}
+                    key={o.order_id}
+                    style={styles.orderBox}>
+                    <Text
+                      style={[styles.orderText, {color: theme.colors.surface}]}>
+                      Order Id: {o.order_id}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          ),
+      )}
 
       <Modal
         showModal={showModal}

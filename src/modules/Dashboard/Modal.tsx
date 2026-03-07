@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomModal from '../../common/components/CustomModal';
-import {IOrder} from '../../types/OrderTypes';
+import {IOrder, IOrderStatus} from '../../types/OrderTypes';
 import {convertDate, renderUserName} from '../../common/services/utility';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../stores/Redux/Store/Store';
@@ -35,11 +35,28 @@ const Modal = ({
   status,
   setStatus,
 }: Props) => {
-  const {users} = useSelector((state: RootState) => state.user);
-  const {statuses} = useSelector((state: RootState) => state.order);
+  const {users, user} = useSelector((state: RootState) => state.user);
+  const [statuses, setStatuses] = useState<IOrderStatus[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const [isUpdating, setIsUpdating] = useState(false);
   const {emitUpdateStatus} = useSocketContext();
+
+  console.log(statuses);
+
+  useEffect(() => {
+    const loadStatuses = async () => {
+      const api_params = {
+        url: `${api.OrderStatuses}?vendor_id=${selectedOrder?.vendor_id}`,
+        baseURL: BaseURL,
+      };
+
+      const res = await httpRequest(api_params, setIsLoading);
+      setStatuses(res.data.result);
+    };
+
+    loadStatuses();
+  }, [selectedOrder?.vendor_id]);
 
   const handleUpdateStatus = async (orderId: number) => {
     const api_params = {
@@ -109,45 +126,38 @@ const Modal = ({
         <View style={styles.textContainer}>
           <Text style={styles.labelText}>Status</Text>
           <SelectDropdown
-            defaultValue={status}
             data={statuses}
+            disabled={isLoading}
             onSelect={selectedItem => {
+              if (selectedItem.av) return;
               setStatus(selectedItem.code);
             }}
-            renderButton={(selectedItem, isOpened) => {
-              return (
-                <View style={styles.dropdownButtonStyle}>
-                  {selectedItem && (
-                    <Icon
-                      name={selectedItem.icon}
-                      style={styles.dropdownButtonIconStyle}
-                      color={'black'}
-                    />
-                  )}
-                  <Text style={styles.dropdownButtonTxtStyle}>
-                    {status || 'Select status'}
-                  </Text>
-                  <Icon
-                    name={isOpened ? 'chevron-up' : 'chevron-down'}
-                    style={styles.dropdownButtonArrowStyle}
-                    color={'black'}
-                  />
-                </View>
-              );
-            }}
+            renderButton={(selectedItem, isOpened) => (
+              <View style={styles.dropdownButtonStyle}>
+                <Text style={styles.dropdownButtonTxtStyle}>
+                  {selectedItem?.label || status || 'Select status'}
+                </Text>
+
+                <Icon
+                  name={isOpened ? 'chevron-up' : 'chevron-down'}
+                  style={styles.dropdownButtonArrowStyle}
+                  color="black"
+                />
+              </View>
+            )}
             renderItem={(item, index, isSelected) => {
               return (
                 <View
-                  style={{
-                    ...styles.dropdownItemStyle,
-                    ...(isSelected && {backgroundColor: '#D2D9DF'}),
-                  }}>
+                  style={[
+                    styles.dropdownItemStyle,
+                    isSelected && {backgroundColor: '#e6e6e6'},
+                  ]}>
                   <Text style={styles.dropdownItemTxtStyle}>{item.label}</Text>
                 </View>
               );
             }}
-            showsVerticalScrollIndicator={false}
             dropdownStyle={styles.dropdownMenuStyle}
+            showsVerticalScrollIndicator={false}
           />
         </View>
         <TouchableOpacity
@@ -211,19 +221,17 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   dropdownMenuStyle: {
-    backgroundColor: '#E9ECEF',
+    backgroundColor: 'white',
     borderRadius: 8,
   },
   dropdownItemStyle: {
     width: '100%',
-    flexDirection: 'row',
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 8,
   },
   dropdownItemTxtStyle: {
-    flex: 1,
+    // flex: 1,
     color: '#151E26',
   },
   dropdownItemIconStyle: {

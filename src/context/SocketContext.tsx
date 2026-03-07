@@ -13,7 +13,12 @@ import {RootState} from '../stores/Redux/Store/Store';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {api} from '../common/apis/api';
 import {httpRequest} from '../common/constant/httpRequest';
-import {setOrders, setStatuses} from '../stores/Redux/Slices/OrderSlice';
+import {
+  addDeliveryRequest,
+  addToDashboard,
+  setOrders,
+  setStatuses,
+} from '../stores/Redux/Slices/OrderSlice';
 import {IOrder} from '../types/OrderTypes';
 
 interface SocketContextProps {
@@ -24,6 +29,7 @@ export interface SocketContextType {
   socket: Socket;
   emitUpdateStatus: (orderId: number) => void;
   emitAddOrder: (orderId: number) => void;
+  emitAcceptDeliveryRequest: (orderId: number) => void;
 }
 
 const SocketContext = createContext({} as SocketContextType);
@@ -33,7 +39,7 @@ export function useSocketContext() {
 }
 
 export function SocketContextProvider({children}: SocketContextProps) {
-  const userId = useSelector((state: RootState) => state.user.user?.user_id);
+  const {user} = useSelector((state: RootState) => state.user);
   const {orders} = useSelector((state: RootState) => state.order);
   const hasInternet = useNetInfo().isConnected;
   const [isLoading, setIsLoading] = useState(false);
@@ -44,14 +50,14 @@ export function SocketContextProvider({children}: SocketContextProps) {
     return io(BaseURL, {
       path: '/socket.io/',
       query: {
-        userId,
+        userId: user.user_id,
       },
       transports: ['websocket'],
     });
-  }, [userId]);
+  }, [user.user_id]);
 
   useEffect(() => {
-    if (!userId) {
+    if (!user.user_id) {
       console.log('No username set, skipping socket connection');
       return;
     }
@@ -59,14 +65,14 @@ export function SocketContextProvider({children}: SocketContextProps) {
       socket.connect();
     }
     socket.on('connect', () => {
-      console.log('Connected to WebSocket', socket.id, userId);
+      console.log('Connected to WebSocket', socket.id, user.user_id);
     });
   });
   //Load statuses
   useEffect(() => {
     const getStatuses = async () => {
       const api_params = {
-        url: `${api.OrderStatuses}?vendor_id=${userId}`,
+        url: `${api.OrderStatuses}?vendor_id=${user.user_id}`,
         baseURL: BaseURL,
         // isConsole: true,
         // isConsoleParams: true,
@@ -79,13 +85,16 @@ export function SocketContextProvider({children}: SocketContextProps) {
     };
 
     getStatuses();
-  }, [dispatch, userId]);
+  }, [dispatch, user.user_id]);
 
   //Load Orders
   useEffect(() => {
     const getOrders = async () => {
       const api_params = {
-        url: `${api.Orders}?vendor_id=${userId}`,
+        url:
+          user.user_type === 'OWNER'
+            ? `${api.Orders}?vendor_id=${user.user_id}`
+            : `${api.Orders}?delivery_man_id=${user.user_id}`,
         baseURL: BaseURL,
         // isConsole: true,
         // isConsoleParams: true,
@@ -98,7 +107,7 @@ export function SocketContextProvider({children}: SocketContextProps) {
     };
 
     getOrders();
-  }, [dispatch, userId]);
+  }, [dispatch, user.user_id, user.user_type]);
 
   //Listen to Socket Events
   useEffect(() => {
@@ -107,8 +116,19 @@ export function SocketContextProvider({children}: SocketContextProps) {
       dispatch(setOrders([...newOrders, order]));
     });
 
+    socket.on('deliveryRequest', (order: IOrder) => {
+      dispatch(addDeliveryRequest(order));
+    });
+
+    socket.on('addToDashboard', (order: IOrder) => {
+      console.log('listened');
+      dispatch(addToDashboard(order));
+    });
+
     return () => {
       socket.off('updateStatus');
+      socket.off('deliveryRequest');
+      socket.off('acceptDeliveryRequest');
     };
   }, [dispatch, orders, socket]);
 
@@ -120,8 +140,18 @@ export function SocketContextProvider({children}: SocketContextProps) {
     socket.emit('addOrder', {order_id: orderId});
   };
 
+  const emitAcceptDeliveryRequest = (orderId: number) => {
+    socket.emit('acceptDeliveryRequest', {order_id: orderId});
+  };
+
   return (
-    <SocketContext.Provider value={{socket, emitUpdateStatus, emitAddOrder}}>
+    <SocketContext.Provider
+      value={{
+        socket,
+        emitUpdateStatus,
+        emitAddOrder,
+        emitAcceptDeliveryRequest,
+      }}>
       {children}
     </SocketContext.Provider>
   );
