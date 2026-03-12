@@ -94,7 +94,9 @@ export function SocketContextProvider({children}: SocketContextProps) {
         url:
           user.user_type === 'OWNER'
             ? `${api.Orders}?vendor_id=${user.user_id}`
-            : `${api.Orders}?delivery_man_id=${user.user_id}`,
+            : user.user_type === 'DELIVERY'
+            ? `${api.Orders}?delivery_man_id=${user.user_id}`
+            : `${api.Orders}?customer_id=${user.user_id}`,
         baseURL: BaseURL,
         // isConsole: true,
         // isConsoleParams: true,

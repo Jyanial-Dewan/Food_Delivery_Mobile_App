@@ -31,3 +31,12 @@ export interface IOrder {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface IStatusHistory {
+  history_id: number;
+  order_id: number;
+  status_code: string;
+  changed_by: number;
+  changed_at: Date;
+  notes?: string;
+}
