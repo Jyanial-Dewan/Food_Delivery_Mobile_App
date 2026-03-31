@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   Alert,
   PermissionsAndroid,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,44 +19,88 @@ import UserHome from './UserHome';
 import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
 import {BaseURL} from '../../../App';
 import {api} from '../../common/apis/api';
+import {secureStorage} from '../../utils/Storage/mmkv';
 
 const Home = () => {
   const theme = useTheme();
   const drawerNav = useNavigation<any>();
   const user = useSelector((state: RootState) => state.user.user);
   const [isLoading, setIsLoading] = useState(false);
+  const resPushNotificaton = secureStorage.getItem('pushNotificaton');
 
   //Post_Notification Permission
   useEffect(() => {
-    const requenstPermissionAndroid = async () => {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        const token = await messaging().getToken();
-        // fcmTokenSave({fcmToken: token});
-        console.log('FCM Token:', token);
-
-        // getFCMToken();
-
-        const tokenParams = {
-          url: `${api.PushNotification}/register_token`,
-          data: {
-            token,
-            user_id: user.user_id,
+    const showAlert = () =>
+      Alert.alert(
+        'Push Notifications',
+        'Allow PRO-CG to send you notifications?',
+        [
+          {
+            text: 'Ask me later',
+            onPress: () => {
+              // console.log('Ask me later pressed');
+              secureStorage.setItem('pushNotificaton', 'askMeLater');
+            },
           },
-          method: 'POST' as httpMethod,
-          baseURL: BaseURL,
-          isConsole: true,
-          isConsoleParams: true,
-        };
-        await httpRequest(tokenParams, setIsLoading);
-      } else {
-        Alert.alert('Permission Denied');
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // console.log('Cancel Pressed');
+              secureStorage.setItem('pushNotificaton', 'cancel');
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              // console.log('OK Pressed');
+              allowPushNotification();
+              secureStorage.setItem('pushNotificaton', 'ok');
+            },
+          },
+        ],
+      );
+
+    const allowPushNotification = async () => {
+      const token = await messaging().getToken();
+      const tokenParams = {
+        url: `${api.PushNotification}/register_token`,
+        data: {
+          token,
+          user_id: user.user_id,
+        },
+        method: 'POST' as httpMethod,
+        baseURL: BaseURL,
+        isConsole: true,
+        isConsoleParams: true,
+      };
+      await httpRequest(tokenParams, setIsLoading);
+    };
+    const requestPermissionAndroid = async () => {
+      //console.log('render time home-------------------');
+      if (Platform.OS === 'android') {
+        // Handle for Android 8.1 or lower
+        if (Platform.Version < 28) {
+          // For Android 8.1 or lower, permission is automatically granted (no need for POST_NOTIFICATIONS)
+          if (!resPushNotificaton || resPushNotificaton === 'askMeLater')
+            showAlert();
+        } else {
+          // For Android 9 and above, request POST_NOTIFICATIONS permission
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            allowPushNotification();
+          } else {
+            Alert.alert('Permission Denied');
+          }
+        }
       }
     };
-    requenstPermissionAndroid();
-  }, []);
+
+    requestPermissionAndroid();
+  }, [resPushNotificaton, user.user_id]);
 
   return (
     <ContainerNew style={styles.container} isScrollView={true}>

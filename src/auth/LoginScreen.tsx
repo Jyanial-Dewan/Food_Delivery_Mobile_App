@@ -80,12 +80,12 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
       data: loginPayload,
       method: 'POST' as httpMethod,
       baseURL: BaseURL,
-      // isConsole: true,
-      // isConsoleParams: true,
+      isConsole: true,
+      isConsoleParams: true,
     };
 
     const res = await httpRequest(api_params, setIsLoading);
-    console.log(res, 'res');
+
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
       const user_api_params = {
         url: `${api.User}?user_id=${res.data.user_id}`,
