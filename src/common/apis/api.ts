@@ -11,4 +11,6 @@ export const api = {
   OrderStatuses: '/api/order_statuses',
   Orders: '/api/orders',
   OrderItems: '/api/order_items',
+  StatusHistory: '/api/order_status_history',
+  PushNotification: '/api/push_notification',
 };

@@ -1,63 +1,106 @@
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
-  ImageBackground,
   PermissionsAndroid,
+  Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import ContainerNew from '../../common/components/Container';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import {useTheme} from 'react-native-paper';
-import BgImage from '../../assets/Banner/Burger.jpg';
-import ImageFlatList from './ImageFlatList';
-import RestaurantList from './RestaurantList';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../stores/Redux/Store/Store';
 import messaging from '@react-native-firebase/messaging';
+import UserHome from './UserHome';
+import {httpMethod, httpRequest} from '../../common/constant/httpRequest';
+import {BaseURL} from '../../../App';
+import {api} from '../../common/apis/api';
+import {secureStorage} from '../../utils/Storage/mmkv';
 
 const Home = () => {
   const theme = useTheme();
   const drawerNav = useNavigation<any>();
   const user = useSelector((state: RootState) => state.user.user);
-  const [search, setSearch] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const resPushNotificaton = secureStorage.getItem('pushNotificaton');
 
   //Post_Notification Permission
   useEffect(() => {
-    const requenstPermissionAndroid = async () => {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    const showAlert = () =>
+      Alert.alert(
+        'Push Notifications',
+        'Allow PRO-CG to send you notifications?',
+        [
+          {
+            text: 'Ask me later',
+            onPress: () => {
+              // console.log('Ask me later pressed');
+              secureStorage.setItem('pushNotificaton', 'askMeLater');
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // console.log('Cancel Pressed');
+              secureStorage.setItem('pushNotificaton', 'cancel');
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              // console.log('OK Pressed');
+              allowPushNotification();
+              secureStorage.setItem('pushNotificaton', 'ok');
+            },
+          },
+        ],
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        const token = await messaging().getToken();
-        // fcmTokenSave({fcmToken: token});
-        console.log('FCM Token:', token);
-        // getFCMToken();
 
-        // const tokenPayload = {
-        //   token: token,
-        //   username: userInfo?.user_name,
-        // };
-        // const tokenParams = {
-        //   url: api.RegisterToken,
-        //   data: tokenPayload,
-        //   method: 'post',
-        //   baseURL: url,
-        //   isConsole: true,
-        //   isConsoleParams: true,
-        // };
-        // await httpRequest(tokenParams, setIsLoading);
-      } else {
-        Alert.alert('Permission Denied');
+    const allowPushNotification = async () => {
+      const token = await messaging().getToken();
+      const tokenParams = {
+        url: `${api.PushNotification}/register_token`,
+        data: {
+          token,
+          user_id: user.user_id,
+        },
+        method: 'POST' as httpMethod,
+        baseURL: BaseURL,
+        isConsole: true,
+        isConsoleParams: true,
+      };
+      await httpRequest(tokenParams, setIsLoading);
+    };
+    const requestPermissionAndroid = async () => {
+      //console.log('render time home-------------------');
+      if (Platform.OS === 'android') {
+        // Handle for Android 8.1 or lower
+        if (Platform.Version < 28) {
+          // For Android 8.1 or lower, permission is automatically granted (no need for POST_NOTIFICATIONS)
+          if (!resPushNotificaton || resPushNotificaton === 'askMeLater')
+            showAlert();
+        } else {
+          // For Android 9 and above, request POST_NOTIFICATIONS permission
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            allowPushNotification();
+          } else {
+            Alert.alert('Permission Denied');
+          }
+        }
       }
     };
-    requenstPermissionAndroid();
-  }, []);
+
+    requestPermissionAndroid();
+  }, [resPushNotificaton, user.user_id]);
 
   return (
     <ContainerNew style={styles.container} isScrollView={true}>
@@ -67,10 +110,15 @@ const Home = () => {
             style={[styles.text, {color: theme.colors.surface, fontSize: 14}]}>
             Hi, {user?.username ?? ''}
           </Text>
-          <Text
-            style={[styles.text, {color: theme.colors.surface, fontSize: 16}]}>
-            What are you craving?
-          </Text>
+          {user.user_type === 'USER' && (
+            <Text
+              style={[
+                styles.text,
+                {color: theme.colors.surface, fontSize: 16},
+              ]}>
+              What are you craving?
+            </Text>
+          )}
         </View>
         <TouchableOpacity
           onPress={drawerNav.toggleDrawer}
@@ -83,34 +131,7 @@ const Home = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.inputContainer}>
-        <View>
-          <Feather name="search" size={24} color="#ccc" />
-        </View>
-        <TextInput
-          placeholder="Search..."
-          value={search}
-          onChangeText={setSearch}
-        />
-      </View>
-
-      <View style={{marginTop: 20, height: 150, borderRadius: 8}}>
-        <ImageBackground source={BgImage} style={{flex: 1}} resizeMode="cover">
-          <View style={styles.background}>
-            <Text style={[styles.text, {fontSize: 35, color: 'white'}]}>
-              35% OFF on Burgers!
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
-
-      <View style={{marginTop: 20}}>
-        <ImageFlatList />
-      </View>
-
-      <View style={{marginTop: 20, flex: 1}}>
-        <RestaurantList />
-      </View>
+      {user.user_type === 'USER' && <UserHome />}
     </ContainerNew>
   );
 };
@@ -135,24 +156,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: 'gray',
-  },
-
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginTop: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-
-  background: {
-    flex: 1,
-    backgroundColor: 'rgba(44, 39, 39, 0.49)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

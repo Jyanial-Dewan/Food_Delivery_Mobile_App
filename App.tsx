@@ -1,13 +1,7 @@
 import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/navigations/RootStack';
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  BackHandler,
-  LogBox,
-  Text,
-  TextInput,
-  useColorScheme,
-} from 'react-native';
+import {LogBox, Text, TextInput, useColorScheme} from 'react-native';
 import {ToastProvider} from './src/common/components/CustomToast';
 import {
   initialWindowMetrics,
@@ -22,12 +16,12 @@ import {Linking} from 'react-native';
 import {setToken, setUsers} from './src/stores/Redux/Slices/UserSlice';
 import {COLORS} from './src/common/constant/Themes';
 import {setTheme} from './src/stores/Redux/Slices/ThemeSlice';
-import Alert from './src/common/components/Alert';
 import {httpRequest} from './src/common/constant/httpRequest';
 import {api} from './src/common/apis/api';
 import {setCart} from './src/stores/Redux/Slices/CartSlice';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SocketContextProvider} from './src/context/SocketContext';
+import messaging from '@react-native-firebase/messaging';
 
 LogBox.ignoreLogs(['EventEmitter.removeListener', 'ViewPropTypes']);
 if ((Text as any).defaultProps == null) {
@@ -160,6 +154,16 @@ const Main = () => {
       console.error(JSON.stringify(error, null, 2));
     }
   }, []);
+
+  // Handle background messages
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Received background message:', remoteMessage);
+  });
+
+  // Handle notifications when the app is in quit mode
+  messaging().onNotificationOpenedApp(async remoteMessage => {
+    console.log('Notification opened from quit state:', remoteMessage);
+  });
 
   // const backAction = () => {
   //   secureStorage.clearAll();

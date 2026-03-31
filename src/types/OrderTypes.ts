@@ -3,6 +3,7 @@ export interface IOrderStatus {
   color: string;
   label: string;
   position: number;
+  available_for: string;
 }
 
 export interface IOrderItem {
@@ -18,6 +19,7 @@ export interface IOrder {
   order_id: number;
   customer_id: number;
   vendor_id: number;
+  delivery_man_id?: number;
   status_code: string;
   payment_status: string;
   payment_method: string;
@@ -28,4 +30,13 @@ export interface IOrder {
   order_items: IOrderItem[];
   created_at: Date;
   updated_at: Date;
+}
+
+export interface IStatusHistory {
+  history_id: number;
+  order_id: number;
+  status_code: string;
+  changed_by: number;
+  changed_at: Date;
+  notes?: string;
 }

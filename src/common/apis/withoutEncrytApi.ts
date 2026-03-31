@@ -8,6 +8,7 @@ const withoutEncryptionApi = [
   api.Orders,
   api.OrderItems,
   api.CartItems,
+  api.PushNotification,
   // api.ProfileImage
 ];
 
