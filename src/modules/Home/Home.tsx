@@ -102,7 +102,7 @@ const Home = () => {
     };
 
     requestPermissionAndroid();
-  }, [resPushNotificaton, user.user_id]);
+  }, [resPushNotificaton, user?.user_id]);
 
   return (
     <ContainerNew style={styles.container} isScrollView={true}>
@@ -112,7 +112,7 @@ const Home = () => {
             style={[styles.text, {color: theme.colors.surface, fontSize: 14}]}>
             Hi, {user?.username ?? ''}
           </Text>
-          {user.user_type === 'USER' && (
+          {user?.user_type === 'USER' && (
             <Text
               style={[
                 styles.text,
@@ -133,7 +133,7 @@ const Home = () => {
         </TouchableOpacity>
       </View>
 
-      {user.user_type === 'USER' && <UserHome />}
+      {user?.user_type === 'USER' && <UserHome />}
     </ContainerNew>
   );
 };

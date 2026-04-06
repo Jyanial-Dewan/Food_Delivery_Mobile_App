@@ -41,7 +41,6 @@ export function useSocketContext() {
 export function SocketContextProvider({children}: SocketContextProps) {
   const {user} = useSelector((state: RootState) => state.user);
   const {orders} = useSelector((state: RootState) => state.order);
-  const hasInternet = useNetInfo().isConnected;
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const socket = useMemo(() => {
@@ -49,25 +48,57 @@ export function SocketContextProvider({children}: SocketContextProps) {
     // return io('wss://procg.datafluent.team', {
     return io(BaseURL, {
       path: '/socket.io/',
-      query: {
-        userId: user.user_id,
-      },
+      query: {userId: user?.user_id},
       transports: ['websocket'],
+      reconnection: true, // enable automatic reconnection
+      reconnectionAttempts: Infinity, // retry forever
+      reconnectionDelay: 1000, // 1 second between attempts
+      forceNew: true,
     });
-  }, [user.user_id]);
+  }, [user?.user_id]);
 
   useEffect(() => {
-    if (!user.user_id) {
-      console.log('No username set, skipping socket connection');
-      return;
-    }
-    if (hasInternet) {
-      socket.connect();
-    }
+    if (!user?.user_id) return;
+
+    const interval = setInterval(() => {
+      if (socket.connected) {
+        socket.emit('heartbeat');
+      }
+    }, 10000); // every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [socket, user?.user_id]);
+
+  useEffect(() => {
     socket.on('connect', () => {
-      console.log('Connected to WebSocket', socket.id, user.user_id);
+      console.log('Connected to WebSocket', socket.id);
     });
-  });
+
+    socket.on('disconnect', reason => {
+      console.log('Disconnected from WebSocket', reason);
+    });
+
+    socket.on('reconnect', attemptNumber => {
+      console.log('Reconnected after', attemptNumber, 'attempts');
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('reconnect');
+    };
+  }, [socket]);
+
+  const {isConnected} = useNetInfo();
+
+  useEffect(() => {
+    if (isConnected && !socket.connected) {
+      socket.connect();
+    } else if (!isConnected && socket.connected) {
+      socket.disconnect();
+    }
+  }, [isConnected, socket]);
+
   //Load statuses
   useEffect(() => {
     const getStatuses = async () => {
@@ -85,16 +116,16 @@ export function SocketContextProvider({children}: SocketContextProps) {
     };
 
     getStatuses();
-  }, [dispatch, user.user_id]);
+  }, [dispatch, user?.user_id]);
 
   //Load Orders
   useEffect(() => {
     const getOrders = async () => {
       const api_params = {
         url:
-          user.user_type === 'OWNER'
+          user?.user_type === 'OWNER'
             ? `${api.Orders}?vendor_id=${user.user_id}`
-            : user.user_type === 'DELIVERY'
+            : user?.user_type === 'DELIVERY'
             ? `${api.Orders}?delivery_man_id=${user.user_id}`
             : `${api.Orders}?customer_id=${user.user_id}`,
         baseURL: BaseURL,
@@ -109,7 +140,7 @@ export function SocketContextProvider({children}: SocketContextProps) {
     };
 
     getOrders();
-  }, [dispatch, user.user_id, user.user_type]);
+  }, [dispatch, user?.user_id, user?.user_type]);
 
   //Listen to Socket Events
   useEffect(() => {

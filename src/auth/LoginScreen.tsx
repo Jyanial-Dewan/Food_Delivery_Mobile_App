@@ -85,6 +85,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     };
 
     const res = await httpRequest(api_params, setIsLoading);
+    console.log(res);
 
     if (res?.data?.access_token && res?.data?.isLoggedIn) {
       const user_api_params = {

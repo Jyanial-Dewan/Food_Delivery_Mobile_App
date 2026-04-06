@@ -60,7 +60,7 @@ const BottomTabs = () => {
           ),
         }}
       />
-      {user.user_type === 'USER' ? (
+      {user?.user_type === 'USER' ? (
         <Screen
           name="Cart"
           component={Cart}

@@ -57,13 +57,13 @@ const Dashboard = () => {
       const dynamicStatuses = res.data.result.status_names as IOrderStatus[];
 
       const availableStatuses = dynamicStatuses.filter(
-        item => item.available_for === user.user_type,
+        item => item.available_for === user?.user_type,
       );
       setStatuses(availableStatuses || []);
     };
 
     loadStatuses();
-  }, [selectedOrder?.vendor_id, user.user_type]);
+  }, [selectedOrder?.vendor_id, user?.user_type]);
 
   const handleUpdateStatus = async (orderId: number) => {
     const api_params = {
